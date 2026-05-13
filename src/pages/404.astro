@@ -1,0 +1,28 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+---
+
+<Layout pageTitle="404" noindex>
+	<Section>
+		<Container>
+			<div class="mx-auto flex w-full max-w-7xl flex-auto flex-col justify-center px-6 py-24 sm:py-64 lg:px-8">
+				<p class="text-base font-semibold">404</p>
+
+				<Heading>
+					<h1 slot="heading-title">Page not found</h1>
+					<p slot="heading-content">Sorry, we couldn't find the page you were looking for.</p>
+				</Heading>
+
+				<div class="mt-10">
+					<a href="/" class="hover:underline font-bold">
+						<span aria-hidden="true">←</span>
+						Back to home
+					</a>
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>
