@@ -1,0 +1,56 @@
+---
+import CardHighlights from '~/components/product/CardHighlights.astro';
+import CardPrice from '~/components/product/CardPrice.astro';
+const { product, companyProfile } = Astro.props;
+---
+
+<li
+  class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-b-4 hover:lg:border-yellow-300"
+>
+  <a
+    href={`/view/${product.id}`}
+    class="relative isolate flex flex-col gap-8 h-full"
+  >
+    <div class="relative aspect-[4/3] lg:shrink-0 ribbon">
+      {
+        product.image_url ? (
+          <img
+            src={product.image_url}
+            alt={product.model}
+            class="absolute inset-0 size-full bg-gray-50 object-cover"
+          />
+        ) : (
+          <div class="absolute inset-0 text-gray-400 size-full bg-gray-100 flex flex-col gap-4 items-center justify-center">
+            <img
+              src={companyProfile.logo_url}
+              alt={companyProfile.name}
+              class="h-24"
+            />
+            <span class="text-gray-400 font-bold italic">Coming Soon</span>
+          </div>
+        )
+      }
+    </div>
+    <div class="flex flex-col items-start grow px-4 max-lg:pb-8">
+      <div class="relative w-full flex flex-col items-start mb-8">
+        <div class="mb-4 lg:mb-6">
+          <h2 class="h5 line-clamp-2">
+            {product.model}
+            {
+              product.series.name && (
+                <span class="text-base block font-normal align-middle">
+                  {product.series.name}
+                </span>
+              )
+            }
+          </h2>
+          <p class="text-base mt-2 line-clamp-3">{product.description}</p>
+        </div>
+        <CardPrice product={product} />
+      </div>
+      <div class="mt-auto lg:mb-4">
+        <CardHighlights product={product} />
+      </div>
+    </div>
+  </a>
+</li>

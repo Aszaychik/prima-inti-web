@@ -1,0 +1,36 @@
+---
+const { product } = Astro.props;
+
+const price = product.price;
+const salePrice = product.salePrice;
+
+// Format IDR: e.g., 1500000 -> "1.500.000"
+const formatIDR = (value: number | null | undefined) => {
+  if (!value && value !== 0) return null;
+  return value.toLocaleString('id-ID');
+};
+
+const hasSale = salePrice && salePrice > 0;
+const displayPrice = hasSale ? salePrice : price;
+---
+
+<div
+  class="xxl:pr-8 shrink-0 max-xxl:flex max-xxl:gap-2 max-xxl:items-center max-xxl:mb-6"
+>
+  {
+    hasSale ? (
+      <>
+        <span class="price line-through text-gray-400 text-sm">
+          Rp{formatIDR(price)}
+        </span>
+        <mark class="price-on-sale bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-bold">
+          Rp{formatIDR(salePrice)}
+        </mark>
+      </>
+    ) : (
+      <span class="price font-semibold text-xl text-green-600">
+        {displayPrice ? `Rp${formatIDR(displayPrice)}` : 'Call for price'}
+      </span>
+    )
+  }
+</div>

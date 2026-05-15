@@ -1,7 +1,7 @@
 ---
 import { fetchData } from '~/services/api';
-import ProductCard from './product/ProductCard.astro';
-import ProductCardAlt from './product/ProductCardAlt.astro';
+import ProductCard from './product/Card.astro';
+import ProductCardAlt from './product/CardAlt.astro';
 
 interface Props {
   recent?: boolean;
@@ -16,6 +16,8 @@ const {
   slugs = [],
   ui = 'list',
 } = Astro.props;
+
+const companyProfile = await fetchData('company-profile');
 
 let products = [];
 
@@ -49,9 +51,9 @@ const wrapperClasses = {
   {
     products.map((product: any) =>
       ui === 'grid' ? (
-        <ProductCardAlt product={product} />
+        <ProductCardAlt product={product} companyProfile={companyProfile} />
       ) : (
-        <ProductCard product={product} />
+        <ProductCard product={product} companyProfile={companyProfile} />
       ),
     )
   }
