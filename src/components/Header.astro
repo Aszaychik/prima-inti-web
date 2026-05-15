@@ -1,6 +1,6 @@
 ---
 import { menuMain } from '~/data/menus';
-import { fetchData } from '~/pages/services/api';
+import { fetchData } from '~/services/api';
 const rmTrailingSlash = (path: string): string => {
   return path.endsWith('/') && path.length > 1
     ? path.slice(0, path.length - 1)
