@@ -1,6 +1,6 @@
 const API_URL = process.env.API_URL || 'http://localhost:8080/api/v1';
 
-export async function fetchData(endpoint) {
+export async function fetchData(endpoint: string): Promise<any> {
   try {
     const response = await fetch(`${API_URL}/${endpoint}`);
     if (!response.ok) {
