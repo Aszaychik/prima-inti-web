@@ -1,271 +1,287 @@
 ---
-import { Image } from "astro:assets";
-import Layout from "~/layouts/Layout.astro";
-import Section from "~/components/Section.astro";
-import Container from "~/components/Container.astro";
-import Button from "~/components/Button.astro";
-import Hero from "~/components/Hero.astro";
-import Faq from "~/components/Faq.astro";
-import Heading from "~/components/Heading.astro";
-import WidgetSearch from "~/components/WidgetSearch.astro";
-import Grid from "~/components/Grid.astro";
-import GridItem from "~/components/GridItem.astro";
-import ShowPosts from "~/components/ShowPosts.astro";
-import Team from "~/components/Team.astro";
-import Stats from "~/components/Stats.astro";
+import { Image } from 'astro:assets';
+import Layout from '~/layouts/Layout.astro';
+import Section from '~/components/Section.astro';
+import Container from '~/components/Container.astro';
+import Button from '~/components/Button.astro';
+import Hero from '~/components/Hero.astro';
+import Faq from '~/components/Faq.astro';
+import Heading from '~/components/Heading.astro';
+import WidgetSearch from '~/components/WidgetSearch.astro';
+import Grid from '~/components/Grid.astro';
+import GridItem from '~/components/GridItem.astro';
+import Stats from '~/components/Stats.astro';
 
 // Images
-import ImageCarDealer from "~/assets/images/pexels-shkrabaanthony-7144179.jpg";
-import ImageHeadingBackground from "~/assets/images/pexels-jeshoots-com-147458-451590.jpg";
-import ShowCars from "~/components/ShowCars.astro";
-import ImageOne from "~/assets/images/pexels-leif-bergerson-99376750-9764731.webp";
-import ImageTwo from "~/assets/images/pexels-zenzazione-2922140.webp";
+import ImageCarDealer from '~/assets/images/pexels-shkrabaanthony-7144179.jpg';
+import ImageHeadingBackground from '~/assets/images/pexels-fox-58267-26510348.jpg';
+import ShowProducts from '~/components/ShowProducts.astro';
+import ImageOne from '~/assets/images/pexels-leif-bergerson-99376750-9764731.webp';
+import ImageTwo from '~/assets/images/pexels-zenzazione-2922140.webp';
+
+// SEO meta description
+const metaDescription =
+  'Prima Inti Electrical – distributor of quality electrical components, plus professional installation, maintenance, and consulting services. Trusted by industry and home users.';
 ---
 
-<Layout pageTitle="Home">
-	{/* Main Heading */}
-	<Section class:list={"relative"}>
-		<Image
-			src={ImageHeadingBackground}
-			alt="Heading background"
-			class:list={"absolute inset-0 w-full h-full object-cover"}
-		/>
-		<div class="absolute inset-0 w-full h-full object-cover bg-gray-800/80"></div>
-		<Container class:list={"relative z-10"}>
-			<Heading class:list={"prose-invert max-w-4xl"}>
-				<h1 slot="heading-title" class="mb-0 lg:text-7xl text-balance">
-					Find your next car in our exclusive collection
-				</h1>
-				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
-				</p>
-			</Heading>
-			<WidgetSearch />
-		</Container>
-	</Section>
+<Layout pageTitle="Home" metaDescription={metaDescription}>
+  {/* Main Heading */}
+  <Section class:list={'relative'}>
+    <Image
+      src={ImageHeadingBackground}
+      alt="Electrical equipment and tools"
+      class:list={'absolute inset-0 w-full h-full object-cover'}
+    />
+    <div class="absolute inset-0 w-full h-full object-cover bg-gray-800/80">
+    </div>
+    <Container class:list={'relative z-10'}>
+      <Heading class:list={'prose-invert max-w-4xl'}>
+        <h1 slot="heading-title" class="mb-0 lg:text-7xl text-balance">
+          Electrical Products & Professional Services
+        </h1>
+        <p slot="heading-content">
+          From circuit breakers to complete panel builds – we supply and service
+          everything electrical. Browse our catalog or let our experts help you
+          find the right solution for your project.
+        </p>
+      </Heading>
+      <WidgetSearch />
+    </Container>
+  </Section>
 
-	{/* Hero */}
-	<Section>
-		<Container>
-			<Hero>
-				<div slot="hero-left" class="prose lg:max-w-2xl">
-					<h2>Welcome to our car dealer!</h2>
-					<p>
-						Find your next car here. We have a wide range of cars for sale. Browse through our collection
-						and find the perfect car that suits your needs and budget.
-					</p>
+  {/* Hero */}
+  <Section>
+    <Container>
+      <Hero>
+        <div slot="hero-left" class="prose lg:max-w-2xl">
+          <h2>Quality components, expert service</h2>
+          <p>
+            Prima Inti Electrical has been delivering reliable electrical
+            products and professional services for over 20 years. We serve
+            industrial, commercial, and residential clients – offering
+            everything from distribution panels, cables, and switchgear to
+            lighting, automation devices, and safety equipment.
+          </p>
 
-					<Button href="/cars" class:list={"mt-4"}>View all cars</Button>
-				</div>
-				<div slot="hero-right">
-					<Image src={ImageCarDealer} alt="Car dealer" />
-				</div>
-			</Hero>
-		</Container>
-	</Section>
+          <Button href="/products" class:list={'mt-4'}>View all products</Button
+          >
+        </div>
+        <div slot="hero-right">
+          <Image
+            src={ImageCarDealer}
+            alt="Electrical engineer inspecting a panel"
+          />
+        </div>
+      </Hero>
+    </Container>
+  </Section>
 
-	{/* Grid */}
-	<Section>
-		<Container>
-			<Grid>
-				<GridItem image={ImageOne} imageAlt="Car dealer" span={2} link="/cars" As="a" xl>
-					<h2>Featured cars</h2>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone. Our extensive inventory is carefully curated to ensure that you
-						find the perfect match for your lifestyle and budget.
-					</p>
-					<Button As="button" type="button" color="white-outline" class:list={"mt-4 group-hover:bg-white/10"}
-						>View all cars</Button
-					>
-				</GridItem>
+  {/* Grid */}
+  <Section>
+    <Container>
+      <Grid>
+        <GridItem
+          image={ImageOne}
+          imageAlt="Industrial electrical panel"
+          span={2}
+          link="/products"
+          As="a"
+          xl
+        >
+          <h2>Featured products</h2>
+          <p>
+            Discover our most‑requested electrical components: compact circuit
+            breakers, energy meters, industrial sockets, surge protection
+            devices, and more. All items meet international safety standards and
+            come with full technical support.
+          </p>
+          <Button
+            As="button"
+            type="button"
+            color="white-outline"
+            class:list={'mt-4 group-hover:bg-white/10'}>View catalog</Button
+          >
+        </GridItem>
 
-				<GridItem image={ImageTwo} imageAlt="Car dealer" link="/cars" As="a">
-					<h3>Featured cars</h3>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone.
-					</p>
-					<Button As="button" type="button" color="white-outline" class:list={"mt-4 group-hover:bg-white/10"}
-						>View all cars</Button
-					>
-				</GridItem>
+        <GridItem
+          image={ImageTwo}
+          imageAlt="Technician performing maintenance"
+          link="/services"
+          As="a"
+        >
+          <h3>Professional services</h3>
+          <p>
+            Need more than just products? Our certified electricians offer
+            installation, preventive maintenance, fault diagnosis, and system
+            upgrades – for factories, office buildings, and homes.
+          </p>
+          <Button
+            As="button"
+            type="button"
+            color="white-outline"
+            class:list={'mt-4 group-hover:bg-white/10'}>Request a quote</Button
+          >
+        </GridItem>
 
-				<GridItem>
-					<h3>Featured cars</h3>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone.
-					</p>
-				</GridItem>
-			</Grid>
-		</Container>
-	</Section>
+        <GridItem>
+          <h3>Custom solutions</h3>
+          <p>
+            Don't see what you need? We design and assemble custom distribution
+            boards, control panels, and automation systems tailored to your
+            exact specifications.
+          </p>
+        </GridItem>
+      </Grid>
+    </Container>
+  </Section>
 
-	{/* Hero */}
-	<Section class:list={"bg-gray-50"}>
-		<Container>
-			<Hero invert>
-				<div slot="hero-left" class="prose lg:max-w-2xl">
-					<h2>Welcome to our car dealer!</h2>
-					<p>
-						Find your next car here. We have a wide range of cars for sale. Browse through our collection
-						and find the perfect car that suits your needs and budget.
-					</p>
-				</div>
-				<div slot="hero-right">
-					<Image src={ImageCarDealer} alt="Car dealer" />
-				</div>
-			</Hero>
-		</Container>
-	</Section>
+  {/* Hero */}
+  <Section class:list={'bg-gray-50'}>
+    <Container>
+      <Hero invert>
+        <div slot="hero-left" class="prose lg:max-w-2xl">
+          <h2>Why choose Prima Inti Electrical?</h2>
+          <p>
+            We combine decades of technical expertise with a customer‑first
+            approach. Every product is sourced from reputable manufacturers, and
+            every service is performed by licensed professionals. We offer fast
+            delivery and 24/7 emergency support.
+          </p>
+        </div>
+        <div slot="hero-right">
+          <Image src={ImageCarDealer} alt="Team of electrical engineers" />
+        </div>
+      </Hero>
+    </Container>
+  </Section>
 
-	{/* Cars */}
-	<Section class:list={"bg-blue-50"}>
-		<Container>
-			<Heading>
-				<h2 slot="heading-title" class="mb-0">Featured cars</h2>
-				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
-				</p>
-			</Heading>
+  {/* Cars - keep as is for now but change section heading */}
+  <Section class:list={'bg-blue-50'}>
+    <Container>
+      <Heading>
+        <h2 slot="heading-title" class="mb-0">
+          Bestselling electrical components
+        </h2>
+        <p slot="heading-content">
+          Explore our top‑rated products – used by electricians and engineers
+          who demand reliability and performance.
+        </p>
+      </Heading>
+      <ShowProducts
+        slugs={[
+          '954c1cf4-4b08-4c75-8d8a-00e68732dc28',
+          'ca96749c-e467-45c5-bbbb-5ee0f6961a33',
+          'bbdb3a0c-51e5-4cb4-b4f8-b6678559eb94',
+        ]}
+      />
+    </Container>
+  </Section>
 
-			<ShowCars slugs={["audi-tt-coupe", "porsche-911", "volkswagen-polo-gti"]} />
-		</Container>
-	</Section>
+  {/* Stats */}
+  <Section>
+    <Container>
+      <Heading class:list={'text-center mx-auto'}>
+        <h2 slot="heading-title" class="text-balance">
+          Serving industry and homes since 2002
+        </h2>
+        <p slot="heading-content">
+          Our numbers speak for themselves – and they keep growing thanks to our
+          loyal customers.
+        </p>
+      </Heading>
 
-	{/* Stats */}
-	<Section>
-		<Container>
-			<Heading class:list={"text-center mx-auto"}>
-				<h2 slot="heading-title" class="text-balance">Why choose us?</h2>
-				<p slot="heading-content">
-					We are the leading car dealer in the country. With over 20 years of experience, we have helped
-					thousands of customers find their dream car.
-				</p>
-			</Heading>
+      <Stats
+        items={[
+          {
+            title: 'Products in stock',
+            value: '3500+',
+            animateNumber: true,
+            animateFrom: 2000,
+          },
+          {
+            title: 'Satisfied customers',
+            value: '1250+',
+            animateNumber: true,
+            animateFrom: 800,
+          },
+          {
+            title: 'Years of experience',
+            value: '22+',
+          },
+        ]}
+      />
+    </Container>
+  </Section>
 
-			<Stats
-				items={[
-					{
-						title: "Cars in stock",
-						value: "259",
-						animateNumber: true,
-						animateFrom: 100,
-					},
-					{
-						title: "Satified customers",
-						value: "1088",
-						animateNumber: true,
-						animateFrom: 800,
-					},
-					{
-						title: "Experience",
-						value: "20+ years",
-					},
-				]}
-			/>
-		</Container>
-	</Section>
+  {/* CTA */}
+  <Section class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}>
+    <Container>
+      <Heading class:list={'mb-0 lg:mb-0 prose-invert text-center mx-auto'}>
+        <h2 slot="heading-title">Need a custom solution or urgent service?</h2>
 
-	{/* CTA */}
-	<Section class:list={"bg-gradient-to-br from-gray-900 to-gray-700"}>
-		<Container>
-			<Heading class:list={"mb-0 lg:mb-0 prose-invert text-center mx-auto"}>
-				<h2 slot="heading-title">Can't find the ideal car?</h2>
+        <p slot="heading-content">
+          Our technical team is ready to advise you – whether you need a single
+          component, a full panel build, or an emergency repair. Contact us
+          today for a free consultation.
+        </p>
 
-				<p slot="heading-content">
-					Our team is here to help you find the perfect car that suits your needs and budget. Whether you're
-					looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we have
-					something for everyone.
-				</p>
+        <Button href="/contact" color="white" class:list={'mt-8'}
+          >Contact our experts</Button
+        >
+      </Heading>
+    </Container>
+  </Section>
 
-				<Button href="/contact" color="white" class:list={"mt-8"}>Contact us</Button>
-			</Heading>
-		</Container>
-	</Section>
+  {/* Cars - recent products section */}
+  <Section class:list={'bg-gray-50'}>
+    <Container>
+      <Heading>
+        <h2 slot="heading-title" class="mb-0">Recently added products</h2>
+        <p slot="heading-content">
+          Check out the latest electrical components we've added to our
+          inventory – new arrivals every month.
+        </p>
+      </Heading>
+      <ShowProducts recent={true} ui="grid" />
+    </Container>
+  </Section>
 
-	{/* Cars */}
-	<Section class:list={"bg-gray-50"}>
-		<Container>
-			<Heading>
-				<h2 slot="heading-title" class="mb-0">Recent cars</h2>
-				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
-				</p>
-			</Heading>
+  {/* FAQ */}
+  <Section class:list={'bg-gray-50'}>
+    <Container>
+      <Heading class:list={'max-w-3xl mx-auto lg:text-center'}>
+        <h2 slot="heading-title">Frequently asked questions</h2>
 
-			<ShowCars ui="grid" slugs={["audi-tt-coupe", "porsche-911", "volkswagen-polo-gti"]} />
-		</Container>
-	</Section>
+        <p slot="heading-content">
+          Everything you need to know about our products, services, and ordering
+          process.
+        </p>
+      </Heading>
 
-	{/* News */}
-	<Section>
-		<Container>
-			<Heading class:list={"max-w-3xl"}>
-				<h2 slot="heading-title">Latest news</h2>
-
-				<p slot="heading-content">
-					Stay up to date with the latest news and updates from our car dealer. Read our blog posts to learn
-					more about our featured cars, special offers, and industry news.
-				</p>
-			</Heading>
-
-			<ShowPosts />
-		</Container>
-	</Section>
-
-	{/* FAQ */}
-	<Section class:list={"bg-gray-50"}>
-		<Container>
-			<Heading class:list={"max-w-3xl mx-auto lg:text-center"}>
-				<h2 slot="heading-title">Welcome to our car dealer!</h2>
-
-				<p slot="heading-content">
-					Find your next car here. We have a wide range of cars for sale. Browse through our collection and
-					find the perfect car that suits your needs and budget.
-				</p>
-			</Heading>
-
-			<Faq
-				items={[
-					{
-						question: "What's the best thing about Switzerland?",
-						answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-					{
-						question: "What do you call a fake noodle?",
-						answer: "An impasta. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-					{
-						question: "What do you call a belt made out of watches?",
-						answer: "A waist of time. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-				]}
-			/>
-		</Container>
-	</Section>
-
-	{/* Team */}
-	<Section>
-		<Container>
-			<Heading class:list={"max-w-3xl mx-auto lg:text-center"}>
-				<h2 slot="heading-title">Our team</h2>
-
-				<p slot="heading-content">
-					Meet the team behind our car dealer. Our dedicated staff is here to help you find the perfect car
-					that suits your needs and budget. Whether you're looking for a sleek sports car, a reliable family
-					vehicle, or an eco-friendly hybrid, we have something for everyone.
-				</p>
-			</Heading>
-
-			<Team />
-		</Container>
-	</Section>
+      <Faq
+        items={[
+          {
+            question: 'Do you sell both retail and wholesale?',
+            answer:
+              'Yes. We serve homeowners, electricians, contractors, and industrial buyers. Volume discounts are available for bulk orders.',
+          },
+          {
+            question: 'Can you install the products I buy from you?',
+            answer:
+              'Absolutely. Our licensed electricians can handle installation, testing, and commissioning – saving you time and ensuring compliance with safety codes.',
+          },
+          {
+            question: 'What brands do you carry?',
+            answer:
+              'We stock leading brands such as Schneider Electric, ABB, Siemens, Legrand, and many others. Contact us for specific brand requests.',
+          },
+          {
+            question: 'Do you offer emergency repair services?',
+            answer:
+              'Yes – we have a 24/7 emergency hotline for critical breakdowns. Our team will be on site as quickly as possible.',
+          },
+        ]}
+      />
+    </Container>
+  </Section>
 </Layout>
