@@ -17,5 +17,8 @@ export default defineConfig({
 	adapter: netlify(),
 	vite: {
 		plugins: [tailwindcss()],
+		define: {
+			'process.env.API_URL': JSON.stringify(process.env.API_URL)
+		},
 	},
 });
