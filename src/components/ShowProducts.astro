@@ -1,0 +1,58 @@
+---
+import { fetchData } from '~/services/api';
+import ProductCard from './product/ProductCard.astro';
+import ProductCardAlt from './product/ProductCardAlt.astro';
+
+interface Props {
+  recent?: boolean;
+  featured?: boolean;
+  slugs?: string[];
+  ui?: 'list' | 'grid';
+}
+
+const {
+  recent = false,
+  featured = false,
+  slugs = [],
+  ui = 'list',
+} = Astro.props;
+
+let products = [];
+
+async function getAllProducts() {
+  const response = await fetchData('products');
+  return response.data || [];
+}
+
+if (recent || featured) {
+  const all = await getAllProducts();
+  products = all
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )
+    .slice(0, 3);
+} else if (slugs.length > 0) {
+  const all = await getAllProducts();
+  products = all.filter((p: any) => slugs.includes(p.id));
+} else {
+  return;
+}
+
+const wrapperClasses = {
+  list: 'grid grid-cols-1 gap-8',
+  grid: 'grid grid-cols-1 gap-8 lg:grid-cols-3',
+};
+---
+
+<ul class={wrapperClasses[ui]}>
+  {
+    products.map((product: any) =>
+      ui === 'grid' ? (
+        <ProductCardAlt product={product} />
+      ) : (
+        <ProductCard product={product} />
+      ),
+    )
+  }
+</ul>
