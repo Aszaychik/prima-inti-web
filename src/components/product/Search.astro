@@ -6,15 +6,15 @@ import IconChevronDown from '~/assets/images/icons/chevron-down-select.svg';
 const response = await fetchData('products');
 const products = response.data || [];
 
-// Extract unique brands (using Map to keep full brand object but unique by name)
+// Extract unique brands (using Map to keep full brand object but unique by id)
 const uniqueBrands = [
-  ...new Map(products.map((p: any) => [p.brand.name, p.brand])).values(),
+  ...new Map(products.map((p: any) => [p.brand.id, p.brand])).values(),
 ];
 // Extract unique model strings globally
 const uniqueModels = [...new Set(products.map((p: any) => p.model))];
 // Extract unique categories
 const uniqueCategories = [
-  ...new Map(products.map((p: any) => [p.category.name, p.category])).values(),
+  ...new Map(products.map((p: any) => [p.category.id, p.category])).values(),
 ];
 ---
 
@@ -36,7 +36,7 @@ const uniqueCategories = [
         <option value="all">Choose brand</option>
         {
           uniqueBrands.map((brand: any) => (
-            <option value={brand.name}>{brand.name}</option>
+            <option value={brand.id}>{brand.name}</option>
           ))
         }
       </select>
@@ -72,7 +72,7 @@ const uniqueCategories = [
         <option value="all">Choose category</option>
         {
           uniqueCategories.map((cat: any) => (
-            <option value={cat.name}>{cat.name}</option>
+            <option value={cat.id}>{cat.name}</option>
           ))
         }
       </select>
@@ -106,7 +106,7 @@ const uniqueCategories = [
       const populateModels = (selectedBrand: string) => {
         const uniqueModels = new Set<string>();
         allProducts.forEach((product: any) => {
-          if (product.brand.name === selectedBrand) {
+          if (product.brand.id === selectedBrand) {
             uniqueModels.add(product.model);
           }
         });
