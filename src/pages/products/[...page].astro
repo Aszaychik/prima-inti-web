@@ -1,0 +1,149 @@
+---
+export const prerender = false;
+
+import Layout from '~/layouts/Layout.astro';
+import Section from '~/components/Section.astro';
+import Container from '~/components/Container.astro';
+import ProductCard from '~/components/product/Card.astro';
+import { fetchData } from '~/services/api';
+import SidebarFilters from '~/components/product/SidebarFilters.astro';
+import Pagination from '~/components/Pagination.astro';
+import SearchSort from '~/components/SearchSort.astro';
+import PresetBar from '~/components/PresetBar.astro';
+import FilterBarMobile from '~/components/FilterBarMobile.astro';
+import { siteName, defaultPaginationSize } from '~/data/config';
+
+// Fetch all products
+const response = await fetchData('products');
+const allProducts = response.data || [];
+
+// Extract unique filter options (using ID as key)
+const brands = [
+  ...new Map(allProducts.map((p) => [p.brand.id, p.brand])).values(),
+];
+const categories = [
+  ...new Map(allProducts.map((p) => [p.category.id, p.category])).values(),
+];
+const series = [
+  ...new Map(
+    allProducts.filter((p) => p.series).map((p) => [p.series.id, p.series]),
+  ).values(),
+];
+const models = [...new Set(allProducts.map((p) => p.model))].sort();
+
+// Get current filter values from URL
+const searchParams = Astro.url.searchParams;
+const filterBrandId = searchParams.get('brand') || 'all';
+const filterCategoryId = searchParams.get('category') || 'all';
+const filterSeriesId = searchParams.get('series') || 'all';
+const filterModel = searchParams.get('model') || 'all';
+
+// Apply filters
+let filteredProducts = allProducts;
+if (filterBrandId !== 'all') {
+  filteredProducts = filteredProducts.filter(
+    (p) => p.brand.id === filterBrandId,
+  );
+}
+if (filterCategoryId !== 'all') {
+  filteredProducts = filteredProducts.filter(
+    (p) => p.category.id === filterCategoryId,
+  );
+}
+if (filterSeriesId !== 'all') {
+  filteredProducts = filteredProducts.filter(
+    (p) => p.series?.id === filterSeriesId,
+  );
+}
+if (filterModel !== 'all') {
+  filteredProducts = filteredProducts.filter((p) => p.model === filterModel);
+}
+
+// Pagination
+const page = parseInt(searchParams.get('page') || '1');
+const pageSize = defaultPaginationSize;
+const totalProducts = filteredProducts.length;
+const totalPages = Math.ceil(totalProducts / pageSize);
+const paginatedProducts = filteredProducts.slice(
+  (page - 1) * pageSize,
+  page * pageSize,
+);
+
+// Prepare data for SidebarFilters (also includes current filter state for highlighting)
+const sidebarData = {
+  brands,
+  categories,
+  series,
+  models,
+  currentFilters: {
+    brand: filterBrandId,
+    category: filterCategoryId,
+    series: filterSeriesId,
+    model: filterModel,
+  },
+  totalCount: totalProducts,
+};
+---
+
+<Layout
+  pageTitle={`Products | ${siteName}`}
+  description="Browse our range of electrical products – servo drives, motors, and industrial automation components."
+>
+  <Section class:list="bg-gray-50 max-lg:max-w-svw max-lg:overflow-hidden">
+    <Container class:list="pt-0 max-lg:px-0 max-lg:max-w-full">
+      <div class="flex flex-col lg:flex-row">
+        <FilterBarMobile params={Array.from(searchParams)} />
+        <SidebarFilters data={sidebarData} />
+        <main class="lg:pl-16 grow">
+          <div class="lg:px-8">
+            <SearchSort />
+            <div class="max-lg:hidden">
+              <PresetBar params={Array.from(searchParams)} />
+            </div>
+            <ul class="grid grid-cols-1 lg:gap-16">
+              {
+                paginatedProducts.length > 0 ? (
+                  paginatedProducts.map((product) => (
+                    <ProductCard product={product} />
+                  ))
+                ) : (
+                  <li class="text-center text-gray-500 py-12">
+                    No products found matching your filters.
+                  </li>
+                )
+              }
+            </ul>
+            {
+              paginatedProducts.length > 0 && totalPages > 1 && (
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  searchParams={searchParams}
+                />
+              )
+            }
+          </div>
+        </main>
+      </div>
+    </Container>
+  </Section>
+</Layout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const openBtn = document.getElementById('button-modal-filter-open');
+    const closeBtn = document.getElementById('button-modal-filter-close');
+    const sidebar = document.getElementById('sidebar-filter');
+    if (sidebar && openBtn && closeBtn) {
+      openBtn.addEventListener('click', () => {
+        sidebar.classList.remove(
+          'max-lg:opacity-0',
+          'max-lg:pointer-events-none',
+        );
+      });
+      closeBtn.addEventListener('click', () => {
+        sidebar.classList.add('max-lg:opacity-0', 'max-lg:pointer-events-none');
+      });
+    }
+  });
+</script>
