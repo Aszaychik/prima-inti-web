@@ -1,22 +1,27 @@
 ---
 export const prerender = false;
-import { fetchData } from '~/services/api';
 import IconReset from '~/assets/images/icons/reset.svg';
 import IconChevronDown from '~/assets/images/icons/chevron-down-select.svg';
 import IconClose from '~/assets/images/icons/close.svg';
 
-// Fetch all products (with brand, category, series objects)
-const response = await fetchData('products');
-const products = response.data || [];
+interface Props {
+  data: {
+    brands: Array<{ id: string; name: string }>;
+    categories: Array<{ id: string; name: string }>;
+    series: Array<{ id: string; name: string }>;
+    models: string[];
+    currentFilters: {
+      brand: string;
+      category: string;
+      series: string;
+      model: string;
+    };
+    totalCount: number;
+  };
+}
 
-// Extract unique brands using id as key
-const uniqueBrands = [
-  ...new Map(products.map((p) => [p.brand.id, p.brand])).values(),
-];
-const uniqueCategories = [
-  ...new Map(products.map((p) => [p.category.id, p.category])).values(),
-];
-// Series are unique per brand, but we'll compute dynamically based on selected brand
+const { data } = Astro.props;
+const { brands, categories, series, models, currentFilters, totalCount } = data;
 ---
 
 <div
@@ -37,12 +42,7 @@ const uniqueCategories = [
       </div>
     </button>
 
-    <form
-      id="form-filter"
-      method="get"
-      class="grid grid-cols-1 gap-y-6"
-      data-products={JSON.stringify(products)}
-    >
+    <form id="form-filter" method="get" class="grid grid-cols-1 gap-y-6">
       <!-- Brand -->
       <div>
         <div class="flex items-center gap-x-2">
@@ -59,8 +59,13 @@ const uniqueCategories = [
           >
             <option value="all">All</option>
             {
-              uniqueBrands.map((brand) => (
-                <option value={brand.id}>{brand.name}</option>
+              brands.map((brand) => (
+                <option
+                  value={brand.id}
+                  selected={currentFilters.brand === brand.id}
+                >
+                  {brand.name}
+                </option>
               ))
             }
           </select>
@@ -84,8 +89,13 @@ const uniqueCategories = [
           >
             <option value="all">All</option>
             {
-              uniqueCategories.map((cat) => (
-                <option value={cat.id}>{cat.name}</option>
+              categories.map((cat) => (
+                <option
+                  value={cat.id}
+                  selected={currentFilters.category === cat.id}
+                >
+                  {cat.name}
+                </option>
               ))
             }
           </select>
@@ -93,7 +103,7 @@ const uniqueCategories = [
         </div>
       </div>
 
-      <!-- Series (depends on brand) -->
+      <!-- Series -->
       <div>
         <div class="flex items-center gap-x-2">
           <label for="series">Series</label>
@@ -108,12 +118,19 @@ const uniqueCategories = [
             class="appearance-none col-start-1 row-start-1"
           >
             <option value="all">All</option>
+            {
+              series.map((s) => (
+                <option value={s.id} selected={currentFilters.series === s.id}>
+                  {s.name}
+                </option>
+              ))
+            }
           </select>
           <IconChevronDown class="icon-chevron-down" />
         </div>
       </div>
 
-      <!-- Model (depends on series and category) -->
+      <!-- Model -->
       <div>
         <div class="flex items-center gap-x-2">
           <label for="model">Model</label>
@@ -128,6 +145,13 @@ const uniqueCategories = [
             class="appearance-none col-start-1 row-start-1"
           >
             <option value="all">All</option>
+            {
+              models.map((model) => (
+                <option value={model} selected={currentFilters.model === model}>
+                  {model}
+                </option>
+              ))
+            }
           </select>
           <IconChevronDown class="icon-chevron-down" />
         </div>
@@ -135,7 +159,7 @@ const uniqueCategories = [
 
       <div class="sticky bottom-0">
         <button type="submit" class="button button-yellow w-full">
-          Search <span id="filter-result-found" class="ml-1">(0)</span>
+          Search <span class="ml-1">({totalCount})</span>
         </button>
       </div>
     </form>
@@ -147,175 +171,34 @@ const uniqueCategories = [
     const form = document.getElementById('form-filter') as HTMLFormElement;
     if (!form) return;
 
-    // Get products from form's data attribute
-    const productsData = form.getAttribute('data-products');
-    if (!productsData) return;
-    const allProducts = JSON.parse(productsData);
-
-    const resultSpan = document.getElementById('filter-result-found')!;
-    const brandSelect = document.getElementById('brand') as HTMLSelectElement;
-    const categorySelect = document.getElementById(
-      'category',
-    ) as HTMLSelectElement;
-    const seriesSelect = document.getElementById('series') as HTMLSelectElement;
-    const modelSelect = document.getElementById('model') as HTMLSelectElement;
-
-    // Helper: Get unique series for a given brand ID
-    function getSeriesByBrand(brandId) {
-      if (brandId === 'all') {
-        // All series (unique by id)
-        const seriesMap = new Map();
-        allProducts.forEach((p) => {
-          if (p.series) seriesMap.set(p.series.id, p.series);
-        });
-        return Array.from(seriesMap.values());
-      } else {
-        const brandProducts = allProducts.filter((p) => p.brand.id === brandId);
-        const seriesMap = new Map();
-        brandProducts.forEach((p) => {
-          if (p.series) seriesMap.set(p.series.id, p.series);
-        });
-        return Array.from(seriesMap.values());
-      }
-    }
-
-    // Helper: Get unique models based on selected series ID and category ID
-    function getModelsBySeriesAndCategory(seriesId, categoryId) {
-      let filtered = allProducts;
-      if (seriesId && seriesId !== 'all') {
-        filtered = filtered.filter((p) => p.series?.id === seriesId);
-      }
-      if (categoryId && categoryId !== 'all') {
-        filtered = filtered.filter((p) => p.category.id === categoryId);
-      }
-      // Extract unique model strings
-      const modelSet = new Set(filtered.map((p) => p.model));
-      return Array.from(modelSet);
-    }
-
-    // Populate series dropdown based on brand
-    function populateSeries(selectedBrandId) {
-      seriesSelect.innerHTML = '<option value="all">All</option>';
-      const seriesList = getSeriesByBrand(selectedBrandId);
-      seriesList.forEach((series) => {
-        const option = document.createElement('option');
-        option.value = series.id;
-        option.textContent = series.name;
-        seriesSelect.appendChild(option);
-      });
-    }
-
-    // Populate model dropdown based on series and category
-    function populateModels() {
-      const selectedSeries = seriesSelect.value;
-      const selectedCategory = categorySelect.value;
-      const models = getModelsBySeriesAndCategory(
-        selectedSeries,
-        selectedCategory,
-      );
-      modelSelect.innerHTML = '<option value="all">All</option>';
-      models.forEach((model) => {
-        const option = document.createElement('option');
-        option.value = model;
-        option.textContent = model;
-        modelSelect.appendChild(option);
-      });
-    }
-
-    // Initial setup from URL params
+    // Clear buttons: show/hide based on current params
     const urlParams = new URLSearchParams(window.location.search);
-    const initialBrand = urlParams.get('brand') || 'all';
-    const initialCategory = urlParams.get('category') || 'all';
-    const initialSeries = urlParams.get('series') || 'all';
-    const initialModel = urlParams.get('model') || 'all';
-
-    if (initialBrand !== 'all') brandSelect.value = initialBrand;
-    if (initialCategory !== 'all') categorySelect.value = initialCategory;
-
-    populateSeries(initialBrand);
-    // Wait for series to be populated then set value and populate models
-    if (initialSeries !== 'all') seriesSelect.value = initialSeries;
-    populateModels();
-    if (initialModel !== 'all') modelSelect.value = initialModel;
-
-    // Event listeners
-    brandSelect.addEventListener('change', () => {
-      populateSeries(brandSelect.value);
-      // Reset series and model when brand changes
-      seriesSelect.value = 'all';
-      populateModels();
-      modelSelect.value = 'all';
-      updateCount();
-    });
-
-    categorySelect.addEventListener('change', () => {
-      populateModels();
-      modelSelect.value = 'all';
-      updateCount();
-    });
-
-    seriesSelect.addEventListener('change', () => {
-      populateModels();
-      modelSelect.value = 'all';
-      updateCount();
-    });
-
-    // Function to count matching products
-    function updateCount() {
-      const brandId = brandSelect.value;
-      const categoryId = categorySelect.value;
-      const seriesId = seriesSelect.value;
-      const modelValue = modelSelect.value;
-
-      let filtered = allProducts;
-      if (brandId !== 'all')
-        filtered = filtered.filter((p) => p.brand.id === brandId);
-      if (categoryId !== 'all')
-        filtered = filtered.filter((p) => p.category.id === categoryId);
-      if (seriesId !== 'all')
-        filtered = filtered.filter((p) => p.series?.id === seriesId);
-      if (modelValue !== 'all')
-        filtered = filtered.filter((p) => p.model === modelValue);
-      resultSpan.textContent = `(${filtered.length})`;
-    }
-
-    form.addEventListener('change', updateCount);
-    updateCount();
-
-    // Clear buttons
     const clearButtons = form.querySelectorAll("button[id^='clear-input-']");
     clearButtons.forEach((button) => {
+      const inputId = button.id.replace('clear-input-', '');
+      const paramValue = urlParams.get(inputId);
+      if (paramValue && paramValue !== 'all') {
+        button.classList.remove('hidden');
+      }
       button.addEventListener('click', (e) => {
-        const inputId = button.id.replace('clear-input-', '');
         const input = form.elements.namedItem(inputId) as HTMLSelectElement;
         if (input) {
           input.value = 'all';
-          input.dispatchEvent(new Event('change'));
-          if (inputId === 'brand') {
-            populateSeries('all');
-            seriesSelect.value = 'all';
-            populateModels();
-            modelSelect.value = 'all';
-          }
-          if (inputId === 'category' || inputId === 'series') {
-            populateModels();
-            modelSelect.value = 'all';
-          }
+          // Submit the form to reload with cleared filter
           form.dispatchEvent(new Event('submit'));
         }
       });
     });
 
-    // Show/hide clear buttons based on URL params (initial)
-    for (const [key, value] of urlParams.entries()) {
-      const input = form.elements.namedItem(key) as HTMLSelectElement;
-      const clearBtn = document.getElementById(`clear-input-${key}`);
-      if (input && clearBtn && value !== 'all') {
-        clearBtn.classList.remove('hidden');
-      }
-    }
+    // Auto-submit when any select changes
+    const selects = form.querySelectorAll('select');
+    selects.forEach((select) => {
+      select.addEventListener('change', () => {
+        form.dispatchEvent(new Event('submit'));
+      });
+    });
 
-    // Submit form to update URL
+    // Override submit to update URL and navigate
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = new URL(window.location.href);
@@ -324,6 +207,8 @@ const uniqueCategories = [
         if (value !== 'all') url.searchParams.set(key, value.toString());
         else url.searchParams.delete(key);
       }
+      // Reset page to 1 when filters change
+      url.searchParams.delete('page');
       window.location.href = url.toString();
     });
   });
