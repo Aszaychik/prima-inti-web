@@ -1,9 +1,15 @@
 ---
-import IconMessage from "~/assets/images/icons/message.svg";
-import Button from "~/components/Button.astro";
+import IconMessage from '~/assets/images/icons/message.svg';
+import Button from '~/components/Button.astro';
+
+const { companyProfile } = Astro.props;
 ---
 
-<Button href="#ask-a-question" class:list={"gap-1"}>
-	<IconMessage class="size-4 inline-block -mt-0.5 mr-1" />
-	<span>Ask a question</span>
+<Button
+  href={`https://wa.me/${companyProfile.phone}`}
+  target="_blank"
+  class:list={'gap-1'}
+>
+  <IconMessage class="size-4 inline-block -mt-0.5 mr-1" />
+  <span>Ask a question</span>
 </Button>
