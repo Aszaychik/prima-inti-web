@@ -7,9 +7,9 @@ export const menuMain: MainMenuItem[] = [
 		url: "/",
 	},
 	{
-		id: "cars",
-		label: "Cars",
-		url: "/cars",
+		id: "products",
+		label: "Products",
+		url: "/products",
 	},
 	{
 		id: "about",
@@ -42,8 +42,8 @@ export const menuNavigation: MenuNavigation = {
 			url: "/",
 		},
 		{
-			name: "Cars",
-			url: "/cars",
+			name: "Products",
+			url: "/products",
 		},
 		{
 			name: "About Us",
@@ -68,8 +68,8 @@ export const menuService: MenuNavigation = {
 			url: "/",
 		},
 		{
-			name: "Cars",
-			url: "/cars",
+			name: "Products",
+			url: "/products",
 		},
 		{
 			name: "About Us",
@@ -94,8 +94,8 @@ export const menuMisc: MenuNavigation = {
 			url: "/",
 		},
 		{
-			name: "Cars",
-			url: "/cars",
+			name: "Products",
+			url: "/products",
 		},
 		{
 			name: "About Us",
@@ -120,8 +120,8 @@ export const menuLegal: MenuNavigation = {
 			url: "/",
 		},
 		{
-			name: "Cars",
-			url: "/cars",
+			name: "Products",
+			url: "/products",
 		},
 		{
 			name: "About Us",
