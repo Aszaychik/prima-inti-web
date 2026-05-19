@@ -21,15 +21,15 @@ import ImageTwo from '~/assets/images/pexels-zenzazione-2922140.webp';
 
 // SEO meta description
 const metaDescription =
-  'Prima Inti Electrical – distributor of quality electrical components, plus professional installation, maintenance, and consulting services. Trusted by industry and home users.';
+  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen, perbaikan, dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
 ---
 
-<Layout pageTitle="Home" metaDescription={metaDescription}>
+<Layout pageTitle="Beranda" metaDescription={metaDescription}>
   {/* Main Heading */}
   <Section class:list={'relative'}>
     <Image
       src={ImageHeadingBackground}
-      alt="Electrical equipment and tools"
+      alt="Peralatan dan perkakas listrik"
       class:list={'absolute inset-0 w-full h-full object-cover'}
     />
     <div class="absolute inset-0 w-full h-full object-cover bg-gray-800/80">
@@ -37,12 +37,13 @@ const metaDescription =
     <Container class:list={'relative z-10'}>
       <Heading class:list={'prose-invert max-w-4xl'}>
         <h1 slot="heading-title" class="mb-0 lg:text-7xl text-balance">
-          Electrical Products & Professional Services
+          Solusi Otomasi Industri Terpercaya
         </h1>
         <p slot="heading-content">
-          From circuit breakers to complete panel builds – we supply and service
-          everything electrical. Browse our catalog or let our experts help you
-          find the right solution for your project.
+          Mitra andal Anda untuk layanan perbaikan, penjualan, dan pemrograman
+          sistem industri – dari servo drive, inverter, PLC, HMI, hingga panel
+          kontrol. Lihat katalog produk atau konsultasikan kebutuhan proyek Anda
+          dengan tim teknis kami.
         </p>
       </Heading>
       <WidgetSearch />
@@ -54,22 +55,22 @@ const metaDescription =
     <Container>
       <Hero>
         <div slot="hero-left" class="prose lg:max-w-2xl">
-          <h2>Quality components, expert service</h2>
+          <h2>Komponen berkualitas, layanan ahli</h2>
           <p>
-            Prima Inti Electrical has been delivering reliable electrical
-            products and professional services for over 20 years. We serve
-            industrial, commercial, and residential clients – offering
-            everything from distribution panels, cables, and switchgear to
-            lighting, automation devices, and safety equipment.
+            CV PRIMA INTI VANINDO telah memberikan solusi otomasi industri dan
+            layanan profesional selama lebih dari 20 tahun. Kami melayani klien
+            industri, komersial, dan residensial – menyediakan inverter, servo
+            drive, PLC, HMI, panel listrik, dan berbagai komponen sistem
+            kontrol.
           </p>
-
-          <Button href="/products" class:list={'mt-4'}>View all products</Button
+          <Button href="/products" class:list={'mt-4'}
+            >Lihat semua produk</Button
           >
         </div>
         <div slot="hero-right">
           <Image
             src={ImageCarDealer}
-            alt="Electrical engineer inspecting a panel"
+            alt="Teknisi listrik sedang memeriksa panel"
           />
         </div>
       </Hero>
@@ -82,89 +83,86 @@ const metaDescription =
       <Grid>
         <GridItem
           image={ImageOne}
-          imageAlt="Industrial electrical panel"
+          imageAlt="Panel kontrol industri"
           span={2}
           link="/products"
           As="a"
           xl
         >
-          <h2>Featured products</h2>
+          <h2>Produk unggulan</h2>
           <p>
-            Discover our most‑requested electrical components: compact circuit
-            breakers, energy meters, industrial sockets, surge protection
-            devices, and more. All items meet international safety standards and
-            come with full technical support.
+            Temukan komponen otomasi industri terpopuler: servo drive, inverter,
+            PLC, HMI, modul kontrol, dan perangkat proteksi. Semua produk
+            memenuhi standar internasional dengan dukungan teknis penuh.
           </p>
           <Button
             As="button"
             type="button"
             color="white-outline"
-            class:list={'mt-4 group-hover:bg-white/10'}>View catalog</Button
+            class:list={'mt-4 group-hover:bg-white/10'}>Lihat katalog</Button
           >
         </GridItem>
 
         <GridItem
           image={ImageTwo}
-          imageAlt="Technician performing maintenance"
+          imageAlt="Teknisi sedang melakukan perawatan"
           link="/services"
           As="a"
         >
-          <h3>Professional services</h3>
+          <h3>Layanan profesional</h3>
           <p>
-            Need more than just products? Our certified electricians offer
-            installation, preventive maintenance, fault diagnosis, and system
-            upgrades – for factories, office buildings, and homes.
+            Perbaikan (repair), instalasi, pemeliharaan preventif, diagnosis
+            kerusakan, dan upgrade sistem – untuk pabrik, gedung perkantoran,
+            dan rumah.
           </p>
           <Button
             As="button"
             type="button"
             color="white-outline"
-            class:list={'mt-4 group-hover:bg-white/10'}>Request a quote</Button
+            class:list={'mt-4 group-hover:bg-white/10'}>Ajukan penawaran</Button
           >
         </GridItem>
 
         <GridItem>
-          <h3>Custom solutions</h3>
+          <h3>Solusi kustom</h3>
           <p>
-            Don't see what you need? We design and assemble custom distribution
-            boards, control panels, and automation systems tailored to your
-            exact specifications.
+            Tidak menemukan yang Anda butuhkan? Kami merakit panel kontrol,
+            sistem otomasi, dan pemrograman PLC/HMI sesuai spesifikasi Anda.
           </p>
         </GridItem>
       </Grid>
     </Container>
   </Section>
 
-  {/* Hero */}
+  {/* Hero invert */}
   <Section class:list={'bg-gray-50'}>
     <Container>
       <Hero invert>
         <div slot="hero-left" class="prose lg:max-w-2xl">
-          <h2>Why choose Prima Inti Electrical?</h2>
+          <h2>Mengapa memilih CV PRIMA INTI VANINDO?</h2>
           <p>
-            We combine decades of technical expertise with a customer‑first
-            approach. Every product is sourced from reputable manufacturers, and
-            every service is performed by licensed professionals. We offer fast
-            delivery and 24/7 emergency support.
+            Kami menggabungkan pengalaman teknis puluhan tahun dengan pendekatan
+            yang mengutamakan kepuasan pelanggan. Setiap produk berasal dari
+            pabrikan ternama, dan setiap layanan dilakukan oleh tenaga ahli
+            bersertifikat. Kami menawarkan pengiriman cepat dan dukungan darurat
+            24/7.
           </p>
         </div>
         <div slot="hero-right">
-          <Image src={ImageCarDealer} alt="Team of electrical engineers" />
+          <Image src={ImageCarDealer} alt="Tim teknisi listrik" />
         </div>
       </Hero>
     </Container>
   </Section>
 
-  {/* Cars - keep as is for now but change section heading */}
+  {/* Featured products section */}
   <Section class:list={'bg-blue-50'}>
     <Container>
       <Heading>
-        <h2 slot="heading-title" class="mb-0">
-          Bestselling electrical components
-        </h2>
+        <h2 slot="heading-title" class="mb-0">Produk otomasi terlaris</h2>
         <p slot="heading-content">
-          Explore our top‑rated products – used by electricians and engineers
-          who demand reliability and performance.
+          Produk pilihan kami – digunakan oleh teknisi dan insinyur yang
+          mengandalkan keandalan dan performa.
         </p>
       </Heading>
       <ShowProducts
@@ -182,31 +180,31 @@ const metaDescription =
     <Container>
       <Heading class:list={'text-center mx-auto'}>
         <h2 slot="heading-title" class="text-balance">
-          Serving industry and homes since 2002
+          Melayani industri sejak 2002
         </h2>
         <p slot="heading-content">
-          Our numbers speak for themselves – and they keep growing thanks to our
-          loyal customers.
+          Angka-angka ini terus bertambah berkat kepercayaan pelanggan setia
+          kami.
         </p>
       </Heading>
 
       <Stats
         items={[
           {
-            title: 'Products in stock',
+            title: 'Produk tersedia',
             value: '3500+',
             animateNumber: true,
             animateFrom: 2000,
           },
           {
-            title: 'Satisfied customers',
+            title: 'Pelanggan puas',
             value: '1250+',
             animateNumber: true,
             animateFrom: 800,
           },
           {
-            title: 'Years of experience',
-            value: '22+',
+            title: 'Tahun pengalaman',
+            value: '10+',
           },
         ]}
       />
@@ -217,29 +215,29 @@ const metaDescription =
   <Section class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}>
     <Container>
       <Heading class:list={'mb-0 lg:mb-0 prose-invert text-center mx-auto'}>
-        <h2 slot="heading-title">Need a custom solution or urgent service?</h2>
+        <h2 slot="heading-title">Butuh solusi kustom atau layanan darurat?</h2>
 
         <p slot="heading-content">
-          Our technical team is ready to advise you – whether you need a single
-          component, a full panel build, or an emergency repair. Contact us
-          today for a free consultation.
+          Tim teknis kami siap memberi saran – baik Anda membutuhkan satu
+          komponen, pembuatan panel lengkap, atau perbaikan darurat. Hubungi
+          kami hari ini untuk konsultasi gratis.
         </p>
 
         <Button href="/contact" color="white" class:list={'mt-8'}
-          >Contact our experts</Button
+          >Hubungi tim ahli</Button
         >
       </Heading>
     </Container>
   </Section>
 
-  {/* Cars - recent products section */}
+  {/* Recent products */}
   <Section class:list={'bg-gray-50'}>
     <Container>
       <Heading>
-        <h2 slot="heading-title" class="mb-0">Recently added products</h2>
+        <h2 slot="heading-title" class="mb-0">Produk terbaru</h2>
         <p slot="heading-content">
-          Check out the latest electrical components we've added to our
-          inventory – new arrivals every month.
+          Komponen otomasi terbaru yang kami tambahkan ke inventaris – setiap
+          bulan ada produk baru.
         </p>
       </Heading>
       <ShowProducts recent={true} ui="grid" />
@@ -250,35 +248,35 @@ const metaDescription =
   <Section class:list={'bg-gray-50'}>
     <Container>
       <Heading class:list={'max-w-3xl mx-auto lg:text-center'}>
-        <h2 slot="heading-title">Frequently asked questions</h2>
+        <h2 slot="heading-title">Pertanyaan yang sering diajukan</h2>
 
         <p slot="heading-content">
-          Everything you need to know about our products, services, and ordering
-          process.
+          Semua yang perlu Anda ketahui tentang produk, layanan, dan cara
+          pemesanan.
         </p>
       </Heading>
 
       <Faq
         items={[
           {
-            question: 'Do you sell both retail and wholesale?',
+            question: 'Apakah Anda menjual eceran dan grosir?',
             answer:
-              'Yes. We serve homeowners, electricians, contractors, and industrial buyers. Volume discounts are available for bulk orders.',
+              'Ya. Kami melayani pemilik rumah, teknisi listrik, kontraktor, dan pembeli industri. Diskon volume tersedia untuk pesanan dalam jumlah besar.',
           },
           {
-            question: 'Can you install the products I buy from you?',
+            question: 'Bisakah Anda memasang produk yang saya beli?',
             answer:
-              'Absolutely. Our licensed electricians can handle installation, testing, and commissioning – saving you time and ensuring compliance with safety codes.',
+              'Tentu. Teknisi listrik bersertifikat kami dapat melakukan instalasi, pengujian, dan komisioning – menghemat waktu Anda dan memastikan kepatuhan terhadap standar keselamatan.',
           },
           {
-            question: 'What brands do you carry?',
+            question: 'Merek apa saja yang Anda sediakan?',
             answer:
-              'We stock leading brands such as Schneider Electric, ABB, Siemens, Legrand, and many others. Contact us for specific brand requests.',
+              'Kami menyediakan merek-merek terkemuka seperti ABB, Siemens, Schneider Electric, Mitsubishi Electric, Yaskawa, Omron, Allen Bradley, Danfoss, Lenze, Fanuc, Eaton dan lainnya. Hubungi kami untuk permintaan merek tertentu.',
           },
           {
-            question: 'Do you offer emergency repair services?',
+            question: 'Apakah Anda menyediakan layanan perbaikan darurat?',
             answer:
-              'Yes – we have a 24/7 emergency hotline for critical breakdowns. Our team will be on site as quickly as possible.',
+              'Ya – kami memiliki hotline darurat 24/7 untuk kerusakan kritis. Tim kami akan segera datang ke lokasi.',
           },
         ]}
       />
