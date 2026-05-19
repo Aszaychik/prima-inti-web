@@ -16,16 +16,16 @@ export const menuMain: MainMenuItem[] = [
     label: "About",
     url: "/about-us",
   },
-  {
-    id: "services",
-    label: "Services",
-    url: "/services",
-    submenu: [
-      { id: "repairs", label: "Repairs", url: "/services/repairs" },
-      { id: "maintenance", label: "Maintenance", url: "/services/maintenance" },
-			{ id: "consulting", label: "Consulting", url: "/services/consulting" },
-    ],
-  }
+  // {
+  //   id: "services",
+  //   label: "Services",
+  //   url: "/services",
+  //   submenu: [
+  //     { id: "repairs", label: "Repairs", url: "/services/repairs" },
+  //     { id: "maintenance", label: "Maintenance", url: "/services/maintenance" },
+	// 		{ id: "consulting", label: "Consulting", url: "/services/consulting" },
+  //   ],
+  // }
 ];
 
 export const menuNavigation: MenuNavigation = {
@@ -34,6 +34,6 @@ export const menuNavigation: MenuNavigation = {
     { name: "Home", url: "/" },
     { name: "Products", url: "/products" },
     { name: "About Us", url: "/about-us" },
-    { name: "Services", url: "/services" }
+    // { name: "Services", url: "/services" }
   ],
 };
