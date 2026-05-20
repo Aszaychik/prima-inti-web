@@ -11,15 +11,16 @@ import WidgetSearch from '~/components/WidgetSearch.astro';
 import Grid from '~/components/Grid.astro';
 import GridItem from '~/components/GridItem.astro';
 import Stats from '~/components/Stats.astro';
+import ShowProducts from '~/components/ShowProducts.astro';
+import { fetchData } from '~/services/api';
 
 // Images
-import ImageCarDealer from '~/assets/images/pexels-shkrabaanthony-7144179.jpg';
 import ImageHeadingBackground from '~/assets/images/pexels-fox-58267-26510348.jpg';
-import ShowProducts from '~/components/ShowProducts.astro';
 import ImageOne from '~/assets/images/pexels-freek-wolsink-508219-34194580.jpg';
 import ImageTwo from '~/assets/images/pexels-pixabay-159201.jpg';
 
-// SEO meta description
+const companyProfile = await fetchData('company-profile');
+
 const metaDescription =
   'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen, perbaikan, dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
 ---
@@ -58,7 +59,7 @@ const metaDescription =
           <h2>Komponen berkualitas, layanan ahli</h2>
           <p>
             CV PRIMA INTI VANINDO telah memberikan solusi otomasi industri dan
-            layanan profesional selama lebih dari 20 tahun. Kami melayani klien
+            layanan profesional selama lebih dari 10 tahun. Kami melayani klien
             industri, komersial, dan residensial – menyediakan inverter, servo
             drive, PLC, HMI, panel listrik, dan berbagai komponen sistem
             kontrol.
@@ -71,18 +72,9 @@ const metaDescription =
         <div slot="hero-right">
           <Stats
             items={[
-              {
-                title: 'Tahun pengalaman',
-                value: '10+',
-              },
-              {
-                title: 'Brand ternama',
-                value: '15+',
-              },
-              {
-                title: 'Kategori produk',
-                value: '25+',
-              },
+              { title: 'Tahun pengalaman', value: '10+' },
+              { title: 'Brand ternama', value: '15+' },
+              { title: 'Kategori produk', value: '25+' },
             ]}
           />
         </div>
@@ -124,9 +116,8 @@ const metaDescription =
         >
           <h3>Layanan profesional</h3>
           <p>
-            Perbaikan (repair), instalasi, pemeliharaan preventif, diagnosis
-            kerusakan, dan upgrade sistem – untuk pabrik, gedung perkantoran,
-            dan rumah.
+            Perbaikan, instalasi, pemeliharaan preventif, diagnosis kerusakan,
+            dan upgrade sistem – untuk pabrik, gedung perkantoran, dan rumah.
           </p>
           <Button
             As="button"
@@ -136,12 +127,30 @@ const metaDescription =
           >
         </GridItem>
 
-        <GridItem>
-          <h3>Solusi kustom</h3>
+        <GridItem As="a" link="#contact">
+          <h3>Tidak menemukan yang dicari?</h3>
           <p>
-            Tidak menemukan yang Anda butuhkan? Kami merakit panel kontrol,
-            sistem otomasi, dan pemrograman PLC/HMI sesuai spesifikasi Anda.
+            Hubungi kami langsung — tim kami siap membantu Anda menemukan
+            komponen yang tepat.
           </p>
+          <span
+            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-300 group-hover:text-gray-500 transition-colors"
+          >
+            Hubungi kami
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+            </svg>
+          </span>
         </GridItem>
       </Grid>
     </Container>
@@ -206,7 +215,7 @@ const metaDescription =
     </Container>
   </Section>
 
-  {/* Featured products section */}
+  {/* Featured products */}
   <Section class:list={'bg-blue-50'}>
     <Container>
       <Heading>
@@ -227,20 +236,33 @@ const metaDescription =
   </Section>
 
   {/* CTA */}
-  <Section class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}>
+  <Section
+    id="contact"
+    class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}
+  >
     <Container>
       <Heading class:list={'mb-0 lg:mb-0 prose-invert text-center mx-auto'}>
-        <h2 slot="heading-title">Butuh solusi kustom atau layanan darurat?</h2>
-
+        <h2 slot="heading-title">Butuh bantuan memilih produk?</h2>
         <p slot="heading-content">
-          Tim teknis kami siap memberi saran – baik Anda membutuhkan satu
-          komponen, pembuatan panel lengkap, atau perbaikan darurat. Hubungi
-          kami hari ini untuk konsultasi gratis.
+          Tim kami siap membantu — baik Anda membutuhkan satu komponen maupun
+          pengadaan dalam jumlah besar. Chat langsung via WhatsApp untuk respons
+          cepat.
         </p>
-
-        <Button href="/contact" color="white" class:list={'mt-8'}
-          >Hubungi tim ahli</Button
+        <a
+          slot="heading-content"
+          href={`https://wa.me/${companyProfile.phone}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-8 inline-flex items-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold px-6 py-3 rounded-lg transition-colors"
         >
+          <img
+            src="https://cdn.brandfetch.io/id6Zq084G_/w/800/h/516/theme/dark/id07h05Ur1.png?c=1dxbfHSJFAPEGdCLU4o5B"
+            alt="WhatsApp"
+            class="h-5 w-auto object-contain"
+            loading="lazy"
+          />
+          Chat via WhatsApp
+        </a>
       </Heading>
     </Container>
   </Section>
@@ -264,13 +286,11 @@ const metaDescription =
     <Container>
       <Heading class:list={'max-w-3xl mx-auto lg:text-center'}>
         <h2 slot="heading-title">Pertanyaan yang sering diajukan</h2>
-
         <p slot="heading-content">
           Semua yang perlu Anda ketahui tentang produk, layanan, dan cara
           pemesanan.
         </p>
       </Heading>
-
       <Faq
         items={[
           {
