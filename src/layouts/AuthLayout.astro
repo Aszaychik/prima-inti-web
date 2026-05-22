@@ -1,0 +1,86 @@
+---
+import '~/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import AuthHeader from '~/components/AuthHeader.astro';
+import { siteName, siteLang, themeColor, siteDescription } from '~/data/config';
+
+// Props
+interface Props {
+  pageTitle?: string; // e.g. "Home" → becomes "Home | Prima Inti Electrical"
+  title?: string; // legacy, same as pageTitle
+  description?: string; // meta description
+  metaDescription?: string; // alternative name for description
+  noindex?: boolean;
+}
+
+const {
+  pageTitle,
+  title,
+  description,
+  metaDescription,
+  noindex = false,
+} = Astro.props;
+
+// Use metaDescription if provided, otherwise description, otherwise site default
+const finalDescription = metaDescription || description || siteDescription;
+
+// Use pageTitle or title, then append site name
+const finalPageTitle = pageTitle || title;
+const fullTitle = finalPageTitle ? `${finalPageTitle} | ${siteName}` : siteName;
+
+// Base URL for canonical and OG
+const baseUrl = `${Astro.url.protocol}//${Astro.url.host}`;
+const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
+---
+
+<!doctype html>
+<html lang={siteLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content={themeColor} />
+    <meta name="description" content={finalDescription} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="author" href="humans.txt" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content={siteName} />
+    <!-- <link rel="manifest" href="/site.webmanifest" /> -->
+
+    <!-- Open Graph -->
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:image" content={`${baseUrl}/images/og-image.jpg`} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={siteLang} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={finalDescription} />
+    <meta name="twitter:image" content={`${baseUrl}/images/og-image.jpg`} />
+
+    <title>{fullTitle}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <AuthHeader />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
+<script>
+  document.addEventListener('astro:after-swap', () => {
+    scrollTo({ top: history.state.scrollY, behavior: 'instant' });
+  });
+</script>
