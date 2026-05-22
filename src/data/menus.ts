@@ -28,7 +28,7 @@ export const menuMain: MainMenuItem[] = [
   // }
 ];
 
-export const menuManage: MainMenuItem[] = [
+export const menuAdmin: MainMenuItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
@@ -37,7 +37,7 @@ export const menuManage: MainMenuItem[] = [
   {
     id: "products",
     label: "Products",
-    url: "/manage/products",
+    url: "/admin/products",
   },
 ];
 

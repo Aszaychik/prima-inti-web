@@ -1,5 +1,5 @@
 ---
-import { menuManage } from '~/data/menus';
+import { menuAdmin } from '~/data/menus';
 import { fetchData } from '~/services/api';
 const rmTrailingSlash = (path: string): string => {
   return path.endsWith('/') && path.length > 1
@@ -36,7 +36,7 @@ const companyProfile = await fetchData('company-profile');
         >
           <div class="flex lg:gap-x-12 items-center">
             {
-              menuManage.map((item) => (
+              menuAdmin.map((item) => (
                 <div class="relative group">
                   <a
                     href={item.url}
