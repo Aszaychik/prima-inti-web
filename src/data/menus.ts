@@ -28,6 +28,19 @@ export const menuMain: MainMenuItem[] = [
   // }
 ];
 
+export const menuManage: MainMenuItem[] = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    url: "/dashboard",
+  },
+  {
+    id: "products",
+    label: "Products",
+    url: "/manage/products",
+  },
+];
+
 export const menuNavigation: MenuNavigation = {
   prettyName: "Navigation",
   items: [
