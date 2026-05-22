@@ -1,4 +1,3 @@
-// src/services/auth.js
 const API_URL = import.meta.env.API_URL || 'http://localhost:8080/api/v1';
 
 const TOKEN_KEY = 'admin_token';
@@ -17,7 +16,6 @@ export async function login(email, password) {
       return { success: false, message: data.message || 'Login failed' };
     }
 
-    // Extract token from the actual response structure: data.data.access_token
     const token = data?.data?.access_token;
     if (!token) {
       console.error('Token not found in response:', data);
