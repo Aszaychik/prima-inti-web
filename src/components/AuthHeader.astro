@@ -75,10 +75,33 @@ const companyProfile = await fetchData('company-profile');
                 </div>
               ))
             }
-            <a href="/logout" class="button button-black ml-8">Logout</a>
+            <button id="auth-btn" class="button button-black ml-8"></button>
           </div>
         </nav>
       </div>
     </div>
   </section>
 </header>
+
+<script>
+  import { isAuthenticated, logout } from '~/services/auth';
+
+  const authBtn = document.getElementById('auth-btn');
+
+  if (isAuthenticated()) {
+    authBtn.textContent = 'Logout';
+  } else {
+    authBtn.textContent = 'Login';
+  }
+
+  if (authBtn) {
+    authBtn.addEventListener('click', () => {
+      if (isAuthenticated()) {
+        logout();
+        window.location.href = '/auth/login';
+      } else {
+        window.location.href = '/auth/login';
+      }
+    });
+  }
+</script>
