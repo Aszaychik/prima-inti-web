@@ -2,7 +2,6 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import playformInline from "@playform/inline";
-import netlify from "@astrojs/netlify";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 
@@ -34,7 +33,6 @@ export default defineConfig({
     devToolbar: {
         enabled: false,
     },
-    adapter: netlify(),
     vite: {
         plugins: [tailwindcss()],
         define: {
