@@ -86,16 +86,27 @@ const companyProfile = await fetchData('company-profile');
 <script>
   import { isAuthenticated, logout } from '~/services/auth';
 
-  const authBtn = document.getElementById('auth-btn');
+  function updateAuthButton() {
+    const authBtn = document.getElementById('auth-btn');
+    if (!authBtn) return;
 
-  if (isAuthenticated()) {
-    authBtn.textContent = 'Logout';
-  } else {
-    authBtn.textContent = 'Login';
+    if (isAuthenticated()) {
+      authBtn.textContent = 'Logout';
+    } else {
+      authBtn.textContent = 'Login';
+    }
   }
 
-  if (authBtn) {
-    authBtn.addEventListener('click', () => {
+  function initAuthButton() {
+    const authBtn = document.getElementById('auth-btn');
+    if (!authBtn) return;
+
+    // Remove any existing listener to avoid duplicates
+    const newBtn = authBtn.cloneNode(true);
+    authBtn.parentNode.replaceChild(newBtn, authBtn);
+    const freshBtn = document.getElementById('auth-btn');
+
+    freshBtn.addEventListener('click', () => {
       if (isAuthenticated()) {
         logout();
         window.location.href = '/auth/login';
@@ -104,4 +115,14 @@ const companyProfile = await fetchData('company-profile');
       }
     });
   }
+
+  // Run on initial load
+  updateAuthButton();
+  initAuthButton();
+
+  // Re-run after every client-side navigation (Astro view transitions)
+  document.addEventListener('astro:page-load', () => {
+    updateAuthButton();
+    initAuthButton();
+  });
 </script>

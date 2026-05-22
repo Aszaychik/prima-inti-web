@@ -54,23 +54,39 @@ import Container from '~/components/Container.astro';
 <script>
   import { login } from '~/services/auth';
 
-  const form = document.getElementById('login-form');
-  const errorDiv = document.getElementById('error-message');
+  function initLoginForm() {
+    const form = document.getElementById('login-form');
+    if (!form) return;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // Remove any existing listener to avoid double submissions
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+    const freshForm = document.getElementById('login-form');
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    freshForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    errorDiv.classList.add('hidden');
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('error-message');
 
-    const result = await login(email, password);
-    if (result.success) {
-      window.location.href = '/dashboard';
-    } else {
-      errorDiv.textContent = result.message || 'Login failed';
-      errorDiv.classList.remove('hidden');
-    }
+      errorDiv.classList.add('hidden');
+
+      const result = await login(email, password);
+      if (result.success) {
+        window.location.href = '/dashboard';
+      } else {
+        errorDiv.textContent = result.message || 'Login failed';
+        errorDiv.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Run on initial load
+  initLoginForm();
+
+  // Re-run after client-side navigation
+  document.addEventListener('astro:page-load', () => {
+    initLoginForm();
   });
 </script>
