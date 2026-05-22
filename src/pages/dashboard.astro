@@ -1,0 +1,60 @@
+---
+import AuthLayout from '~/layouts/AuthLayout.astro';
+import Section from '~/components/Section.astro';
+import Container from '~/components/Container.astro';
+---
+
+<AuthLayout pageTitle="Dashboard">
+  <Section>
+    <Container>
+      <div class="max-w-4xl mx-auto bg-white p-8 rounded shadow-md">
+        <div id="auth-check" class="hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <button
+              id="logout-btn"
+              class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+            >
+              Logout
+            </button>
+          </div>
+          <p class="text-green-600">
+            ✅ Login successful! You are now viewing the dashboard.
+          </p>
+          <p class="mt-4 text-gray-600">
+            This is a simple placeholder. You can add admin features here later.
+          </p>
+        </div>
+        <div id="login-prompt" class="text-center py-8">
+          <p class="text-red-600 mb-4">You are not logged in.</p>
+          <a href="/auth/login" class="bg-yellow-200 px-4 py-2 rounded"
+            >Go to Login</a
+          >
+        </div>
+      </div>
+    </Container>
+  </Section>
+</AuthLayout>
+
+<script>
+  import { isAuthenticated, logout } from '~/services/auth';
+
+  const authCheckDiv = document.getElementById('auth-check');
+  const loginPromptDiv = document.getElementById('login-prompt');
+
+  if (isAuthenticated()) {
+    authCheckDiv.classList.remove('hidden');
+    loginPromptDiv.classList.add('hidden');
+  } else {
+    authCheckDiv.classList.add('hidden');
+    loginPromptDiv.classList.remove('hidden');
+  }
+
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      logout();
+      window.location.href = '/auth/login';
+    });
+  }
+</script>
