@@ -27,6 +27,8 @@ async function request<T = any>(endpoint: string, options: RequestInit = {}): Pr
 
   const makeRequest = async (): Promise<T> => {
     const response = await fetch(`${API_URL}/${endpoint}`, { ...options, headers });
+    
+    // Handle 401 Unauthorized – attempt to refresh token
     if (response.status === 401) {
       if (!isRefreshing) {
         isRefreshing = true;
@@ -35,7 +37,7 @@ async function request<T = any>(endpoint: string, options: RequestInit = {}): Pr
           if (success) {
             token = getAccessToken();
             if (token) headers['Authorization'] = `Bearer ${token}`;
-            return fetch(`${API_URL}/${endpoint}`, { ...options, headers }).then(r => r.json());
+            return makeRequest(); // retry the original request
           } else {
             logout();
             window.location.href = '/auth/login';
@@ -43,12 +45,21 @@ async function request<T = any>(endpoint: string, options: RequestInit = {}): Pr
           }
         });
       }
-      return refreshPromise!.then(() => makeRequest());
+      return refreshPromise!;
     }
+
+    // Handle 204 No Content (successful DELETE, no body)
+    if (response.status === 204) {
+      return null as T;
+    }
+
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || `Request failed: ${response.statusText}`);
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed: ${response.statusText}`);
+    }
     return data;
   };
+
   return makeRequest();
 }
 
