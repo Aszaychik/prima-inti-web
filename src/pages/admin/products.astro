@@ -1,0 +1,441 @@
+---
+import AuthLayout from '~/layouts/AuthLayout.astro';
+import Section from '~/components/Section.astro';
+import Container from '~/components/Container.astro';
+import Search from '~/components/admin/Search.astro';
+---
+
+<AuthLayout pageTitle="Manage Products">
+  <Section>
+    <Container>
+      <div class="bg-white rounded shadow p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">Products</h1>
+          <div class="flex items-center gap-3">
+            <Search placeholder="Search products..." id="admin-search" />
+            <button
+              id="create-product-btn"
+              class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
+              >+</button
+            >
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full border text-sm">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="border px-4 py-2 text-left">Model</th>
+                <th class="border px-4 py-2 text-left">Brand</th>
+                <th class="border px-4 py-2 text-left">Category</th>
+                <th class="border px-4 py-2 text-left">Series</th>
+                <th class="border px-4 py-2 text-left">Price (IDR)</th>
+                <th class="border px-4 py-2 text-left">Stock</th>
+                <th class="border px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <tr><td colspan="7" class="text-center py-4">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Modal -->
+  <div
+    id="product-modal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4"
+  >
+    <div
+      class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+    >
+      <h2 id="modal-title" class="text-xl font-bold mb-4">Add Product</h2>
+      <form id="product-form">
+        <input type="hidden" id="product-id" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Model -->
+          <div class="sm:col-span-2">
+            <label class="block mb-1 text-sm font-medium"
+              >Model <span class="text-red-500">*</span></label
+            >
+            <input
+              type="text"
+              id="product-model"
+              required
+              class="w-full border px-3 py-2 rounded text-sm"
+            />
+          </div>
+
+          <!-- Brand -->
+          <div>
+            <label class="block mb-1 text-sm font-medium"
+              >Brand <span class="text-red-500">*</span></label
+            >
+            <select
+              id="product-brand-id"
+              required
+              class="w-full border px-3 py-2 rounded bg-white text-sm"
+            >
+              <option value="">Select brand</option>
+            </select>
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label class="block mb-1 text-sm font-medium"
+              >Category <span class="text-red-500">*</span></label
+            >
+            <select
+              id="product-category-id"
+              required
+              class="w-full border px-3 py-2 rounded bg-white text-sm"
+            >
+              <option value="">Select category</option>
+            </select>
+          </div>
+
+          <!-- Series (filtered by brand) -->
+          <div class="sm:col-span-2">
+            <label class="block mb-1 text-sm font-medium">Series</label>
+            <select
+              id="product-series-id"
+              class="w-full border px-3 py-2 rounded bg-white text-sm"
+            >
+              <option value="">Select brand first</option>
+            </select>
+          </div>
+
+          <!-- Price -->
+          <div>
+            <label class="block mb-1 text-sm font-medium">Price (IDR)</label>
+            <input
+              type="number"
+              id="product-price"
+              min="0"
+              class="w-full border px-3 py-2 rounded text-sm"
+              placeholder="0"
+            />
+          </div>
+
+          <!-- Stock -->
+          <div>
+            <label class="block mb-1 text-sm font-medium">Stock</label>
+            <input
+              type="number"
+              id="product-stock"
+              min="0"
+              class="w-full border px-3 py-2 rounded text-sm"
+              placeholder="0"
+            />
+          </div>
+
+          <!-- Image URL -->
+          <div class="sm:col-span-2">
+            <label class="block mb-1 text-sm font-medium">Image URL</label>
+            <input
+              type="url"
+              id="product-image-url"
+              class="w-full border px-3 py-2 rounded text-sm"
+              placeholder="https://..."
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="sm:col-span-2">
+            <label class="block mb-1 text-sm font-medium">Description</label>
+            <textarea
+              id="product-description"
+              rows="3"
+              class="w-full border px-3 py-2 rounded text-sm"></textarea>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button
+            type="button"
+            id="modal-close"
+            class="px-4 py-2 border rounded text-sm">Cancel</button
+          >
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded text-sm"
+            >Save</button
+          >
+        </div>
+      </form>
+    </div>
+  </div>
+</AuthLayout>
+
+<script>
+  import { get, post, put, del } from '~/services/api';
+
+  let currentEditId = null;
+  let brands = [];
+  let categories = [];
+  let allSeries = [];
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, (m) => {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  function formatIDR(val) {
+    if (!val && val !== 0) return '-';
+    return Number(val).toLocaleString('id-ID');
+  }
+
+  async function loadRelatedData() {
+    const [brandsRes, categoriesRes, seriesRes] = await Promise.all([
+      get('brands'),
+      get('categories'),
+      get('series'),
+    ]);
+    brands = brandsRes.data || [];
+    categories = categoriesRes.data || [];
+    allSeries = seriesRes.data || [];
+
+    // Populate brand select
+    const brandSelect = document.getElementById('product-brand-id');
+    if (brandSelect) {
+      brandSelect.innerHTML = `
+        <option value="">Select brand</option>
+        ${brands.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('')}
+      `;
+    }
+
+    // Populate category select
+    const categorySelect = document.getElementById('product-category-id');
+    if (categorySelect) {
+      categorySelect.innerHTML = `
+        <option value="">Select category</option>
+        ${categories.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')}
+      `;
+    }
+  }
+
+  function updateSeriesDropdown(brandId, selectedSeriesId = '') {
+    const seriesSelect = document.getElementById('product-series-id');
+    if (!seriesSelect) return;
+    const filtered = allSeries.filter((s) => s.brand_id === brandId);
+    if (!brandId || filtered.length === 0) {
+      seriesSelect.innerHTML = `<option value="">${brandId ? 'No series for this brand' : 'Select brand first'}</option>`;
+      return;
+    }
+    seriesSelect.innerHTML = `
+      <option value="">None</option>
+      ${filtered.map((s) => `<option value="${s.id}" ${s.id === selectedSeriesId ? 'selected' : ''}>${escapeHtml(s.name)}</option>`).join('')}
+    `;
+  }
+
+  async function loadProducts() {
+    const tbody = document.getElementById('products-tbody');
+    if (!tbody) return;
+    tbody.innerHTML =
+      '<tr><td colspan="7" class="text-center py-4">Loading...</td></tr>';
+    try {
+      const response = await get('products');
+      const products = response.data || [];
+      if (products.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="7" class="text-center py-4">No products found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = products
+        .map(
+          (p) => `
+        <tr>
+          <td class="border px-4 py-2 font-medium">${escapeHtml(p.model)}</td>
+          <td class="border px-4 py-2">${escapeHtml(p.brand?.name) || '-'}</td>
+          <td class="border px-4 py-2">${escapeHtml(p.category?.name) || '-'}</td>
+          <td class="border px-4 py-2">${escapeHtml(p.series?.name) || '-'}</td>
+          <td class="border px-4 py-2">${formatIDR(p.price)}</td>
+          <td class="border px-4 py-2">
+            <span class="${p.stock > 0 ? 'text-green-600' : 'text-red-500'}">${p.stock ?? 0}</span>
+          </td>
+          <td class="border px-4 py-2 whitespace-nowrap">
+            <button class="edit-btn text-blue-600 mr-2"
+              data-id="${p.id}"
+              data-model="${escapeHtml(p.model)}"
+              data-brand-id="${p.brand?.id || ''}"
+              data-category-id="${p.category?.id || ''}"
+              data-series-id="${p.series?.id || ''}"
+              data-price="${p.price ?? ''}"
+              data-stock="${p.stock ?? ''}"
+              data-image-url="${escapeHtml(p.image_url || '')}"
+              data-description="${escapeHtml(p.description || '')}"
+            >Edit</button>
+            <button class="delete-btn text-red-600" data-id="${p.id}">Delete</button>
+          </td>
+        </tr>
+      `,
+        )
+        .join('');
+      attachEvents();
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-600">Error: ${err.message}</td></tr>`;
+    }
+  }
+
+  function attachEvents() {
+    document.querySelectorAll('.edit-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openModal({
+          id: btn.getAttribute('data-id'),
+          model: btn.getAttribute('data-model'),
+          brand_id: btn.getAttribute('data-brand-id'),
+          category_id: btn.getAttribute('data-category-id'),
+          series_id: btn.getAttribute('data-series-id'),
+          price: btn.getAttribute('data-price'),
+          stock: btn.getAttribute('data-stock'),
+          image_url: btn.getAttribute('data-image-url'),
+          description: btn.getAttribute('data-description'),
+        });
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this product?')) {
+          try {
+            await del(`products/${id}`);
+            loadProducts();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+    });
+  }
+
+  function openModal(data = {}) {
+    currentEditId = data.id || null;
+    document.getElementById('product-id').value = data.id || '';
+    document.getElementById('product-model').value = data.model || '';
+    document.getElementById('product-brand-id').value = data.brand_id || '';
+    document.getElementById('product-category-id').value =
+      data.category_id || '';
+    document.getElementById('product-price').value = data.price || '';
+    document.getElementById('product-stock').value = data.stock || '';
+    document.getElementById('product-image-url').value = data.image_url || '';
+    document.getElementById('product-description').value =
+      data.description || '';
+    document.getElementById('modal-title').innerText = currentEditId
+      ? 'Edit Product'
+      : 'Add Product';
+
+    // Update series dropdown based on brand
+    updateSeriesDropdown(data.brand_id, data.series_id);
+
+    const modal = document.getElementById('product-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('product-modal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    document.getElementById('product-form').reset();
+    updateSeriesDropdown('');
+    currentEditId = null;
+  }
+
+  function init() {
+    document
+      .getElementById('create-product-btn')
+      ?.addEventListener('click', () => openModal());
+    document
+      .getElementById('modal-close')
+      ?.addEventListener('click', closeModal);
+
+    // Update series when brand changes
+    document
+      .getElementById('product-brand-id')
+      ?.addEventListener('change', (e) => {
+        updateSeriesDropdown(e.target.value);
+      });
+
+    const form = document.getElementById('product-form');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const model = document.getElementById('product-model').value.trim();
+        const brand_id = document.getElementById('product-brand-id').value;
+        const category_id = document.getElementById(
+          'product-category-id',
+        ).value;
+        const series_id =
+          document.getElementById('product-series-id').value || undefined;
+        const price = document.getElementById('product-price').value;
+        const stock = document.getElementById('product-stock').value;
+        const image_url =
+          document.getElementById('product-image-url').value.trim() ||
+          undefined;
+        const description =
+          document.getElementById('product-description').value.trim() ||
+          undefined;
+
+        if (!model) {
+          alert('Model is required');
+          return;
+        }
+        if (!brand_id) {
+          alert('Brand is required');
+          return;
+        }
+        if (!category_id) {
+          alert('Category is required');
+          return;
+        }
+
+        const payload = {
+          model,
+          brand_id,
+          category_id,
+          series_id,
+          price: price ? Number(price) : 0,
+          stock: stock ? Number(stock) : 0,
+          image_url,
+          description,
+        };
+
+        try {
+          if (currentEditId) {
+            await put(`products/${currentEditId}`, payload);
+          } else {
+            await post('products', payload);
+          }
+          closeModal();
+          loadProducts();
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+    }
+
+    document.addEventListener('admin:search', (e) => {
+      const query = e.detail.query.toLowerCase();
+      document.querySelectorAll('#products-tbody tr').forEach((row) => {
+        row.style.display = row.textContent.toLowerCase().includes(query)
+          ? ''
+          : 'none';
+      });
+    });
+
+    loadRelatedData().then(loadProducts);
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>
