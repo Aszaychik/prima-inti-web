@@ -1,14 +1,22 @@
 const API_URL = import.meta.env.API_URL || 'http://localhost:8080/api/v1';
 
-function getToken(): string | null {
-  if (typeof localStorage !== 'undefined') {
-    return localStorage.getItem('admin_token');
+// ---------- Public: no token, no refresh ----------
+export async function fetchData(endpoint: string): Promise<any> {
+  const response = await fetch(`${API_URL}/${endpoint}`);
+  if (!response.ok) {
+    throw new Error(`Error fetching data: ${response.statusText}`);
   }
-  return null;
+  return response.json();
 }
 
+// ---------- Admin: token + auto refresh ----------
+import { getAccessToken, refreshAccessToken, logout } from './auth';
+
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
+
 async function request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const token = getToken();
+  let token = getAccessToken();
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -17,24 +25,33 @@ async function request<T = any>(endpoint: string, options: RequestInit = {}): Pr
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}/${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || `Request failed: ${response.statusText}`);
-  }
-  return data;
+  const makeRequest = async (): Promise<T> => {
+    const response = await fetch(`${API_URL}/${endpoint}`, { ...options, headers });
+    if (response.status === 401) {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshPromise = refreshAccessToken().then(success => {
+          isRefreshing = false;
+          if (success) {
+            token = getAccessToken();
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            return fetch(`${API_URL}/${endpoint}`, { ...options, headers }).then(r => r.json());
+          } else {
+            logout();
+            window.location.href = '/auth/login';
+            throw new Error('Session expired');
+          }
+        });
+      }
+      return refreshPromise!.then(() => makeRequest());
+    }
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || `Request failed: ${response.statusText}`);
+    return data;
+  };
+  return makeRequest();
 }
 
-// Public GET (no token required by design, but request will add token if present)
-export async function fetchData(endpoint: string): Promise<any> {
-  return request(endpoint, { method: 'GET' });
-}
-
-// Admin CRUD (with token)
 export async function get(endpoint: string) {
   return request(endpoint, { method: 'GET' });
 }
