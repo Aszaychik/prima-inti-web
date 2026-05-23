@@ -35,10 +35,8 @@ import Container from '~/components/Container.astro';
 
 <script>
   import { isAuthenticated } from '~/services/auth';
-
   const dashboardDiv = document.getElementById('dashboard-content');
   const loginPromptDiv = document.getElementById('login-prompt');
-
   if (isAuthenticated()) {
     dashboardDiv.classList.remove('hidden');
     loginPromptDiv.classList.add('hidden');
