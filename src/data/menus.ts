@@ -40,6 +40,11 @@ export const menuAdmin: MainMenuItem[] = [
     url: "/admin/products",
   },
   {
+    id: "categories",
+    label: "Categories",
+    url: "/admin/categories",
+  },
+  {
     id: "brands",
     label: "Brands",
     url: "/admin/brands",
