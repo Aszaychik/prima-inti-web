@@ -83,14 +83,6 @@ import Search from '~/components/admin/Search.astro';
     </div>
 
     <script>
-      document.addEventListener('admin:search', (e) => {
-        const query = e.detail.query;
-        document.querySelectorAll('#categories-tbody tr').forEach((row) => {
-          const text = row.textContent.toLowerCase();
-          row.style.display = text.includes(query) ? '' : 'none';
-        });
-      });
-
       import { get, post, put, del } from '~/services/api';
 
       let currentEditId = null;
@@ -110,17 +102,17 @@ import Search from '~/components/admin/Search.astro';
           tbody.innerHTML = categories
             .map(
               (cat) => `
-              <tr>
-                <td class="border px-4 py-2">${cat.id}</td>
-                <td class="border px-4 py-2">${escapeHtml(cat.name)}</td>
-                <td class="border px-4 py-2">${escapeHtml(cat.description) || '-'}</td>
-                <td class="border px-4 py-2">${new Date(cat.created_at).toLocaleDateString()}</td>
-                <td class="border px-4 py-2">
-                  <button class="edit-btn text-blue-600 mr-2" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}" data-description="${escapeHtml(cat.description || '')}">Edit</button>
-                  <button class="delete-btn text-red-600" data-id="${cat.id}">Delete</button>
-                </td>
-              </tr>
-            `,
+        <tr>
+          <td class="border px-4 py-2">${cat.id}</td>
+          <td class="border px-4 py-2">${escapeHtml(cat.name)}</td>
+          <td class="border px-4 py-2">${escapeHtml(cat.description) || '-'}</td>
+          <td class="border px-4 py-2">${new Date(cat.created_at).toLocaleDateString()}</td>
+          <td class="border px-4 py-2">
+            <button class="edit-btn text-blue-600 mr-2" data-id="${cat.id}" data-name="${escapeHtml(cat.name)}" data-description="${escapeHtml(cat.description || '')}">Edit</button>
+            <button class="delete-btn text-red-600" data-id="${cat.id}">Delete</button>
+          </td>
+        </tr>
+      `,
             )
             .join('');
           attachButtonEvents();
@@ -132,10 +124,11 @@ import Search from '~/components/admin/Search.astro';
       function attachButtonEvents() {
         document.querySelectorAll('.edit-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
-            const id = btn.getAttribute('data-id');
-            const name = btn.getAttribute('data-name');
-            const description = btn.getAttribute('data-description');
-            openModal(id, name, description);
+            openModal(
+              btn.getAttribute('data-id'),
+              btn.getAttribute('data-name'),
+              btn.getAttribute('data-description'),
+            );
           });
         });
         document.querySelectorAll('.delete-btn').forEach((btn) => {
@@ -184,40 +177,55 @@ import Search from '~/components/admin/Search.astro';
         });
       }
 
-      const form = document.getElementById('category-form');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('category-name').value.trim();
-          const description = document
-            .getElementById('category-description')
-            .value.trim();
-          if (!name) {
-            alert('Name is required');
-            return;
-          }
-          const payload = { name };
-          if (description) payload.description = description;
-          try {
-            if (currentEditId) {
-              await put(`categories/${currentEditId}`, payload);
-            } else {
-              await post('categories', payload);
+      function init() {
+        const createBtn = document.getElementById('create-category-btn');
+        if (createBtn) createBtn.addEventListener('click', () => openModal());
+
+        const closeBtn = document.getElementById('modal-close');
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+        const form = document.getElementById('category-form');
+        if (form) {
+          form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('category-name').value.trim();
+            const description = document
+              .getElementById('category-description')
+              .value.trim();
+            if (!name) {
+              alert('Name is required');
+              return;
             }
-            closeModal();
-            loadCategories();
-          } catch (err) {
-            alert(err.message);
-          }
+            const payload = { name };
+            if (description) payload.description = description;
+            try {
+              if (currentEditId) {
+                await put(`categories/${currentEditId}`, payload);
+              } else {
+                await post('categories', payload);
+              }
+              closeModal();
+              loadCategories();
+            } catch (err) {
+              alert(err.message);
+            }
+          });
+        }
+
+        document.addEventListener('admin:search', (e) => {
+          const query = e.detail.query;
+          document.querySelectorAll('#categories-tbody tr').forEach((row) => {
+            row.style.display = row.textContent.toLowerCase().includes(query)
+              ? ''
+              : 'none';
+          });
         });
+
+        loadCategories();
       }
 
-      const createBtn = document.getElementById('create-category-btn');
-      if (createBtn) createBtn.addEventListener('click', () => openModal());
-      const closeBtn = document.getElementById('modal-close');
-      if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-      loadCategories();
+      init();
+      document.addEventListener('astro:after-swap', init);
     </script>
   </Section>
 </AuthLayout>

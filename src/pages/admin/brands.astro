@@ -85,14 +85,6 @@ import Search from '~/components/admin/Search.astro';
         </div>
 
         <script>
-          document.addEventListener('admin:search', (e) => {
-            const query = e.detail.query.toLowerCase();
-            document.querySelectorAll('#brands-tbody tr').forEach((row) => {
-              const text = row.textContent.toLowerCase();
-              row.style.display = text.includes(query) ? '' : 'none';
-            });
-          });
-
           import { get, post, put, del } from '~/services/api';
 
           let currentEditId = null;
@@ -100,44 +92,45 @@ import Search from '~/components/admin/Search.astro';
           async function loadBrands() {
             const tbody = document.getElementById('brands-tbody');
             tbody.innerHTML =
-              '<tr><td colspan="5" class="text-center py-4">Loading...<\/td><\/tr>';
+              '<tr><td colspan="5" class="text-center py-4">Loading...</td></tr>';
             try {
               const response = await get('brands');
               const brands = response.data || [];
               if (brands.length === 0) {
                 tbody.innerHTML =
-                  '<tr><td colspan="5" class="text-center py-4">No brands found.<\/td><\/tr>';
+                  '<tr><td colspan="5" class="text-center py-4">No brands found.</td></tr>';
                 return;
               }
               tbody.innerHTML = brands
                 .map(
                   (brand) => `
-            <tr>
-              <td class="border px-4 py-2">${brand.id}<\/td>
-              <td class="border px-4 py-2">${escapeHtml(brand.name)}<\/td>
-              <td class="border px-4 py-2">${brand.logo_url ? `<a href="${brand.logo_url}" target="_blank" class="text-blue-600">Link</a>` : '-'}<\/td>
-              <td class="border px-4 py-2">${new Date(brand.created_at).toLocaleDateString()}<\/td>
-              <td class="border px-4 py-2">
-                <button class="edit-btn text-blue-600 mr-2" data-id="${brand.id}" data-name="${escapeHtml(brand.name)}" data-logo="${brand.logo_url || ''}">Edit</button>
-                <button class="delete-btn text-red-600" data-id="${brand.id}">Delete</button>
-              <\/td>
-            </tr>
-          `,
+        <tr>
+          <td class="border px-4 py-2">${brand.id}</td>
+          <td class="border px-4 py-2">${escapeHtml(brand.name)}</td>
+          <td class="border px-4 py-2">${brand.logo_url ? `<a href="${brand.logo_url}" target="_blank" class="text-blue-600">Link</a>` : '-'}</td>
+          <td class="border px-4 py-2">${new Date(brand.created_at).toLocaleDateString()}</td>
+          <td class="border px-4 py-2">
+            <button class="edit-btn text-blue-600 mr-2" data-id="${brand.id}" data-name="${escapeHtml(brand.name)}" data-logo="${brand.logo_url || ''}">Edit</button>
+            <button class="delete-btn text-red-600" data-id="${brand.id}">Delete</button>
+          </td>
+        </tr>
+      `,
                 )
                 .join('');
               attachButtonEvents();
             } catch (err) {
-              tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-600">Error: ${err.message}<\/td><\/tr>`;
+              tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-600">Error: ${err.message}</td></tr>`;
             }
           }
 
           function attachButtonEvents() {
             document.querySelectorAll('.edit-btn').forEach((btn) => {
               btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const name = btn.getAttribute('data-name');
-                const logo = btn.getAttribute('data-logo');
-                openModal(id, name, logo);
+                openModal(
+                  btn.getAttribute('data-id'),
+                  btn.getAttribute('data-name'),
+                  btn.getAttribute('data-logo'),
+                );
               });
             });
             document.querySelectorAll('.delete-btn').forEach((btn) => {
@@ -186,39 +179,57 @@ import Search from '~/components/admin/Search.astro';
             });
           }
 
-          const form = document.getElementById('brand-form');
-          if (form) {
-            form.addEventListener('submit', async (e) => {
-              e.preventDefault();
-              const name = document.getElementById('brand-name').value.trim();
-              const logo_url = document
-                .getElementById('brand-logo')
-                .value.trim();
-              if (!name) {
-                alert('Name is required');
-                return;
-              }
-              const payload = { name, logo_url: logo_url || undefined };
-              try {
-                if (currentEditId) {
-                  await put(`brands/${currentEditId}`, payload);
-                } else {
-                  await post('brands', payload);
+          function init() {
+            const createBtn = document.getElementById('create-brand-btn');
+            if (createBtn)
+              createBtn.addEventListener('click', () => openModal());
+
+            const closeBtn = document.getElementById('modal-close');
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+            const form = document.getElementById('brand-form');
+            if (form) {
+              form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('brand-name').value.trim();
+                const logo_url = document
+                  .getElementById('brand-logo')
+                  .value.trim();
+                if (!name) {
+                  alert('Name is required');
+                  return;
                 }
-                closeModal();
-                loadBrands();
-              } catch (err) {
-                alert(err.message);
-              }
+                const payload = { name, logo_url: logo_url || undefined };
+                try {
+                  if (currentEditId) {
+                    await put(`brands/${currentEditId}`, payload);
+                  } else {
+                    await post('brands', payload);
+                  }
+                  closeModal();
+                  loadBrands();
+                } catch (err) {
+                  alert(err.message);
+                }
+              });
+            }
+
+            document.addEventListener('admin:search', (e) => {
+              const query = e.detail.query.toLowerCase();
+              document.querySelectorAll('#brands-tbody tr').forEach((row) => {
+                row.style.display = row.textContent
+                  .toLowerCase()
+                  .includes(query)
+                  ? ''
+                  : 'none';
+              });
             });
+
+            loadBrands();
           }
 
-          const createBtn = document.getElementById('create-brand-btn');
-          if (createBtn) createBtn.addEventListener('click', () => openModal());
-          const closeBtn = document.getElementById('modal-close');
-          if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-          loadBrands();
+          init();
+          document.addEventListener('astro:after-swap', init);
         </script>
       </div>
     </Container></Section
