@@ -6,11 +6,12 @@ import { siteName, siteLang, themeColor, siteDescription } from '~/data/config';
 
 // Props
 interface Props {
-  pageTitle?: string; // e.g. "Home" → becomes "Home | Prima Inti Electrical"
-  title?: string; // legacy, same as pageTitle
-  description?: string; // meta description
-  metaDescription?: string; // alternative name for description
+  pageTitle?: string;
+  title?: string;
+  description?: string;
+  metaDescription?: string;
   noindex?: boolean;
+  requireAuth?: boolean;
 }
 
 const {
@@ -19,16 +20,12 @@ const {
   description,
   metaDescription,
   noindex = false,
+  requireAuth = true,
 } = Astro.props;
 
-// Use metaDescription if provided, otherwise description, otherwise site default
 const finalDescription = metaDescription || description || siteDescription;
-
-// Use pageTitle or title, then append site name
 const finalPageTitle = pageTitle || title;
 const fullTitle = finalPageTitle ? `${finalPageTitle} | ${siteName}` : siteName;
-
-// Base URL for canonical and OG
 const baseUrl = `${Astro.url.protocol}//${Astro.url.host}`;
 const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
 ---
@@ -44,15 +41,12 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
     <link rel="canonical" href={canonicalURL} />
     <link rel="author" href="humans.txt" />
 
-    <!-- Favicons -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content={siteName} />
-    <!-- <link rel="manifest" href="/site.webmanifest" /> -->
 
-    <!-- Open Graph -->
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
@@ -61,7 +55,6 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
     <meta property="og:site_name" content={siteName} />
     <meta property="og:locale" content={siteLang} />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={fullTitle} />
@@ -71,7 +64,7 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
     <title>{fullTitle}</title>
     <ClientRouter />
   </head>
-  <body>
+  <body data-require-auth={requireAuth ? 'true' : 'false'}>
     <AuthHeader />
     <main>
       <slot />
@@ -80,7 +73,21 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
 </html>
 
 <script>
+  import { isAuthenticated } from '~/services/auth';
+
+  function checkAuth() {
+    const requireAuth = document.body.dataset.requireAuth === 'true';
+    if (requireAuth && !isAuthenticated()) {
+      window.location.href = '/auth/login';
+    }
+  }
+
+  // Check on first load
+  checkAuth();
+
+  // Re-check on every client-side navigation
   document.addEventListener('astro:after-swap', () => {
+    checkAuth();
     scrollTo({ top: history.state.scrollY, behavior: 'instant' });
   });
 </script>
