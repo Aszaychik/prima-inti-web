@@ -85,151 +85,37 @@ import Search from '~/components/admin/Search.astro';
         </div>
 
         <script>
-          import { get, post, put, del } from '~/services/api';
+          import { createAdminTable } from '~/services/adminTable';
 
-          let currentEditId = null;
-
-          async function loadBrands() {
-            const tbody = document.getElementById('brands-tbody');
-            tbody.innerHTML =
-              '<tr><td colspan="5" class="text-center py-4">Loading...</td></tr>';
-            try {
-              const response = await get('brands');
-              const brands = response.data || [];
-              if (brands.length === 0) {
-                tbody.innerHTML =
-                  '<tr><td colspan="5" class="text-center py-4">No brands found.</td></tr>';
-                return;
-              }
-              tbody.innerHTML = brands
-                .map(
-                  (brand) => `
-        <tr>
-          <td class="border px-4 py-2">${brand.id}</td>
-          <td class="border px-4 py-2">${escapeHtml(brand.name)}</td>
-          <td class="border px-4 py-2">${brand.logo_url ? `<a href="${brand.logo_url}" target="_blank" class="text-blue-600">Link</a>` : '-'}</td>
-          <td class="border px-4 py-2">${new Date(brand.created_at).toLocaleDateString()}</td>
-          <td class="border px-4 py-2">
-            <button class="edit-btn text-blue-600 mr-2" data-id="${brand.id}" data-name="${escapeHtml(brand.name)}" data-logo="${brand.logo_url || ''}">Edit</button>
-            <button class="delete-btn text-red-600" data-id="${brand.id}">Delete</button>
-          </td>
-        </tr>
-      `,
-                )
-                .join('');
-              attachButtonEvents();
-            } catch (err) {
-              tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-600">Error: ${err.message}</td></tr>`;
-            }
-          }
-
-          function attachButtonEvents() {
-            document.querySelectorAll('.edit-btn').forEach((btn) => {
-              btn.addEventListener('click', () => {
-                openModal(
-                  btn.getAttribute('data-id'),
-                  btn.getAttribute('data-name'),
-                  btn.getAttribute('data-logo'),
-                );
-              });
-            });
-            document.querySelectorAll('.delete-btn').forEach((btn) => {
-              btn.addEventListener('click', async () => {
-                const id = btn.getAttribute('data-id');
-                if (confirm('Are you sure you want to delete this brand?')) {
-                  try {
-                    await del(`brands/${id}`);
-                    loadBrands();
-                  } catch (err) {
-                    alert(err.message);
-                  }
-                }
-              });
-            });
-          }
-
-          function openModal(id = null, name = '', logo = '') {
-            currentEditId = id;
-            document.getElementById('brand-id').value = id || '';
-            document.getElementById('brand-name').value = name;
-            document.getElementById('brand-logo').value = logo;
-            document.getElementById('modal-title').innerText = id
-              ? 'Edit Brand'
-              : 'Add Brand';
-            const modal = document.getElementById('brand-modal');
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
-          }
-
-          function closeModal() {
-            const modal = document.getElementById('brand-modal');
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-            document.getElementById('brand-form').reset();
-            currentEditId = null;
-          }
-
-          function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, (m) => {
-              if (m === '&') return '&amp;';
-              if (m === '<') return '&lt;';
-              if (m === '>') return '&gt;';
-              return m;
-            });
-          }
-
-          function init() {
-            const createBtn = document.getElementById('create-brand-btn');
-            if (createBtn)
-              createBtn.addEventListener('click', () => openModal());
-
-            const closeBtn = document.getElementById('modal-close');
-            if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-            const form = document.getElementById('brand-form');
-            if (form) {
-              form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('brand-name').value.trim();
-                const logo_url = document
-                  .getElementById('brand-logo')
-                  .value.trim();
-                if (!name) {
-                  alert('Name is required');
-                  return;
-                }
-                const payload = { name, logo_url: logo_url || undefined };
-                try {
-                  if (currentEditId) {
-                    await put(`brands/${currentEditId}`, payload);
-                  } else {
-                    await post('brands', payload);
-                  }
-                  closeModal();
-                  loadBrands();
-                } catch (err) {
-                  alert(err.message);
-                }
-              });
-            }
-
-            document.addEventListener('admin:search', (e) => {
-              const query = e.detail.query.toLowerCase();
-              document.querySelectorAll('#brands-tbody tr').forEach((row) => {
-                row.style.display = row.textContent
-                  .toLowerCase()
-                  .includes(query)
-                  ? ''
-                  : 'none';
-              });
-            });
-
-            loadBrands();
-          }
-
-          init();
-          document.addEventListener('astro:after-swap', init);
+          createAdminTable({
+            endpoint: 'brands',
+            tbodyId: 'brands-tbody',
+            modalId: 'brand-modal',
+            formId: 'brand-form',
+            createBtnId: 'create-brand-btn',
+            closeBtnId: 'modal-close',
+            modalTitleId: 'modal-title',
+            idField: 'brand-id',
+            columns: [
+              { key: 'id' },
+              { key: 'name', escape: true },
+              {
+                key: 'logo_url',
+                render: (val) =>
+                  val
+                    ? `<a href="${val}" target="_blank" class="text-blue-600">Link</a>`
+                    : '-',
+              },
+              {
+                key: 'created_at',
+                render: (val) => new Date(val).toLocaleDateString(),
+              },
+            ],
+            fields: [
+              { id: 'brand-name', key: 'name', required: true },
+              { id: 'brand-logo', key: 'logo_url' },
+            ],
+          });
         </script>
       </div>
     </Container></Section
