@@ -49,6 +49,11 @@ export const menuAdmin: MainMenuItem[] = [
     label: "Brands",
     url: "/admin/brands",
   },
+  {
+    id: "series",
+    label: "Series",
+    url: "/admin/series",
+  }
 ];
 
 export const menuNavigation: MenuNavigation = {

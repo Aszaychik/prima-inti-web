@@ -1,0 +1,265 @@
+---
+import AuthLayout from '~/layouts/AuthLayout.astro';
+import Section from '~/components/Section.astro';
+import Container from '~/components/Container.astro';
+import Search from '~/components/admin/Search.astro';
+---
+
+<AuthLayout pageTitle="Manage Series">
+  <Section>
+    <Container>
+      <div class="bg-white rounded shadow p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">Series</h1>
+          <div class="flex items-center gap-3">
+            <Search placeholder="Search series..." id="admin-search" />
+            <button
+              id="create-series-btn"
+              class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
+              >+</button
+            >
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full border">
+            <thead>
+              <tr>
+                <th class="border px-4 py-2">ID</th>
+                <th class="border px-4 py-2">Name</th>
+                <th class="border px-4 py-2">Brand</th>
+                <th class="border px-4 py-2">Created At</th>
+                <th class="border px-4 py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="series-tbody">
+              <tr><td colspan="5" class="text-center py-4">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Modal -->
+        <div
+          id="series-modal"
+          class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50"
+        >
+          <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h2 id="modal-title" class="text-xl font-bold mb-4">Add Series</h2>
+            <form id="series-form">
+              <input type="hidden" id="series-id" />
+
+              <div class="mb-4">
+                <label class="block mb-1">Name</label>
+                <input
+                  type="text"
+                  id="series-name"
+                  required
+                  class="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div class="mb-4">
+                <label class="block mb-1">Brand</label>
+                <select
+                  id="series-brand-id"
+                  required
+                  class="w-full border px-3 py-2 rounded bg-white"
+                >
+                  <option value="">Loading brands...</option>
+                </select>
+              </div>
+
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  id="modal-close"
+                  class="px-4 py-2 border rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </Section>
+</AuthLayout>
+
+<script>
+  import { get, post, put, del } from '~/services/api';
+
+  let currentEditId = null;
+  let brands = [];
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, (m) => {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  async function loadBrands() {
+    try {
+      const res = await get('brands');
+      brands = res.data || [];
+      const select = document.getElementById('series-brand-id');
+      if (!select) return;
+      select.innerHTML = `
+        <option value="">Select a brand</option>
+        ${brands.map((b) => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('')}
+      `;
+    } catch (err) {
+      console.error('Failed to load brands:', err.message);
+    }
+  }
+
+  async function loadSeries() {
+    const tbody = document.getElementById('series-tbody');
+    if (!tbody) return;
+    tbody.innerHTML =
+      '<tr><td colspan="5" class="text-center py-4">Loading...</td></tr>';
+    try {
+      const response = await get('series');
+      const series = response.data || [];
+      if (series.length === 0) {
+        tbody.innerHTML =
+          '<tr><td colspan="5" class="text-center py-4">No series found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = series
+        .map((s) => {
+          const brandName =
+            brands.find((b) => b.id === s.brand_id)?.name || s.brand_id;
+          return `
+          <tr>
+            <td class="border px-4 py-2">${s.id}</td>
+            <td class="border px-4 py-2">${escapeHtml(s.name)}</td>
+            <td class="border px-4 py-2">${escapeHtml(brandName)}</td>
+            <td class="border px-4 py-2">${new Date(s.created_at).toLocaleDateString()}</td>
+            <td class="border px-4 py-2">
+              <button class="edit-btn text-blue-600 mr-2"
+                data-id="${s.id}"
+                data-name="${escapeHtml(s.name)}"
+                data-brand-id="${s.brand_id}"
+              >Edit</button>
+              <button class="delete-btn text-red-600" data-id="${s.id}">Delete</button>
+            </td>
+          </tr>
+        `;
+        })
+        .join('');
+      attachEvents();
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-600">Error: ${err.message}</td></tr>`;
+    }
+  }
+
+  function attachEvents() {
+    document.querySelectorAll('.edit-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openModal({
+          id: btn.getAttribute('data-id'),
+          name: btn.getAttribute('data-name'),
+          brand_id: btn.getAttribute('data-brand-id'),
+        });
+      });
+    });
+    document.querySelectorAll('.delete-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this series?')) {
+          try {
+            await del(`series/${id}`);
+            loadSeries();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+      });
+    });
+  }
+
+  function openModal({ id = null, name = '', brand_id = '' } = {}) {
+    currentEditId = id;
+    document.getElementById('series-id').value = id || '';
+    document.getElementById('series-name').value = name;
+    document.getElementById('series-brand-id').value = brand_id;
+    document.getElementById('modal-title').innerText = id
+      ? 'Edit Series'
+      : 'Add Series';
+    const modal = document.getElementById('series-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('series-modal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
+    document.getElementById('series-form').reset();
+    currentEditId = null;
+  }
+
+  function init() {
+    document
+      .getElementById('create-series-btn')
+      ?.addEventListener('click', () => openModal());
+    document
+      .getElementById('modal-close')
+      ?.addEventListener('click', closeModal);
+
+    const form = document.getElementById('series-form');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('series-name').value.trim();
+        const brand_id = document.getElementById('series-brand-id').value;
+        if (!name) {
+          alert('Name is required');
+          return;
+        }
+        if (!brand_id) {
+          alert('Brand is required');
+          return;
+        }
+        try {
+          if (currentEditId) {
+            await put(`series/${currentEditId}`, { name, brand_id });
+          } else {
+            await post('series', { name, brand_id });
+          }
+          closeModal();
+          loadSeries();
+        } catch (err) {
+          alert(err.message);
+        }
+      });
+    }
+
+    document.addEventListener('admin:search', (e) => {
+      const query = e.detail.query.toLowerCase();
+      document.querySelectorAll('#series-tbody tr').forEach((row) => {
+        row.style.display = row.textContent.toLowerCase().includes(query)
+          ? ''
+          : 'none';
+      });
+    });
+
+    // Load brands first so names resolve in the table
+    loadBrands().then(loadSeries);
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>
