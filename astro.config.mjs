@@ -23,6 +23,9 @@ try {
 export default defineConfig({
     site: APP_URL,
     base: "/",
+    server: {
+        allowedHosts: [process.env.ALLOWED_HOST || "localhost", "www." + (process.env.ALLOWED_HOST || "localhost")],
+    },
     integrations: [
         mdx(),
         playformInline({ Critters: true }),
