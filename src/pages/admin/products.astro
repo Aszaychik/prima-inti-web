@@ -59,9 +59,9 @@ import Search from '~/components/admin/Search.astro';
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Model -->
           <div class="sm:col-span-2">
-            <label class="block mb-1 text-sm font-medium"
-              >Model <span class="text-red-500">*</span></label
-            >
+            <label class="block mb-1 text-sm font-medium">
+              Model <span class="text-red-500">*</span>
+            </label>
             <input
               type="text"
               id="product-model"
@@ -72,9 +72,9 @@ import Search from '~/components/admin/Search.astro';
 
           <!-- Brand -->
           <div>
-            <label class="block mb-1 text-sm font-medium"
-              >Brand <span class="text-red-500">*</span></label
-            >
+            <label class="block mb-1 text-sm font-medium">
+              Brand <span class="text-red-500">*</span>
+            </label>
             <select
               id="product-brand-id"
               required
@@ -86,9 +86,9 @@ import Search from '~/components/admin/Search.astro';
 
           <!-- Category -->
           <div>
-            <label class="block mb-1 text-sm font-medium"
-              >Category <span class="text-red-500">*</span></label
-            >
+            <label class="block mb-1 text-sm font-medium">
+              Category <span class="text-red-500">*</span>
+            </label>
             <select
               id="product-category-id"
               required
@@ -98,7 +98,7 @@ import Search from '~/components/admin/Search.astro';
             </select>
           </div>
 
-          <!-- Series (filtered by brand) -->
+          <!-- Series -->
           <div class="sm:col-span-2">
             <label class="block mb-1 text-sm font-medium">Series</label>
             <select
@@ -144,13 +144,52 @@ import Search from '~/components/admin/Search.astro';
             />
           </div>
 
-          <!-- Description -->
+          <!-- Description (plain text) -->
           <div class="sm:col-span-2">
-            <label class="block mb-1 text-sm font-medium">Description</label>
+            <label class="block mb-1 text-sm font-medium">
+              Description
+              <span class="text-gray-400 font-normal"
+                >(plain text, untuk fallback)</span
+              >
+            </label>
             <textarea
               id="product-description"
-              rows="3"
-              class="w-full border px-3 py-2 rounded text-sm"></textarea>
+              rows="2"
+              class="w-full border px-3 py-2 rounded text-sm"
+              placeholder="Deskripsi singkat produk..."></textarea>
+          </div>
+
+          <!-- Description HTML -->
+          <div class="sm:col-span-2">
+            <label class="block mb-1 text-sm font-medium">
+              Description HTML
+              <span class="text-gray-400 font-normal"
+                >(untuk tampilan detail produk, mendukung h2, ul, strong, dll)</span
+              >
+            </label>
+            <textarea
+              id="product-description-html"
+              rows="8"
+              class="w-full border px-3 py-2 rounded text-sm font-mono"
+              placeholder="<p>Deskripsi produk...</p>
+<h2>Keunggulan</h2>
+<ul>
+  <li><strong>Fitur 1</strong> – penjelasan</li>
+</ul>"
+            ></textarea>
+            <!-- Preview toggle -->
+            <div class="mt-2 flex items-center gap-2">
+              <button
+                type="button"
+                id="preview-toggle"
+                class="text-xs text-blue-600 underline">Preview HTML</button
+              >
+            </div>
+            <div
+              id="description-preview"
+              class="hidden mt-2 p-3 border rounded bg-gray-50 prose prose-sm max-w-none"
+            >
+            </div>
           </div>
         </div>
 
@@ -204,7 +243,6 @@ import Search from '~/components/admin/Search.astro';
     categories = categoriesRes.data || [];
     allSeries = seriesRes.data || [];
 
-    // Populate brand select
     const brandSelect = document.getElementById('product-brand-id');
     if (brandSelect) {
       brandSelect.innerHTML = `
@@ -213,7 +251,6 @@ import Search from '~/components/admin/Search.astro';
       `;
     }
 
-    // Populate category select
     const categorySelect = document.getElementById('product-category-id');
     if (categorySelect) {
       categorySelect.innerHTML = `
@@ -263,23 +300,16 @@ import Search from '~/components/admin/Search.astro';
             <span class="${p.stock > 0 ? 'text-green-600' : 'text-red-500'}">${p.stock ?? 0}</span>
           </td>
           <td class="border px-4 py-2 whitespace-nowrap">
-            <button class="edit-btn text-blue-600 mr-2"
-              data-id="${p.id}"
-              data-model="${escapeHtml(p.model)}"
-              data-brand-id="${p.brand?.id || ''}"
-              data-category-id="${p.category?.id || ''}"
-              data-series-id="${p.series?.id || ''}"
-              data-price="${p.price ?? ''}"
-              data-stock="${p.stock ?? ''}"
-              data-image-url="${escapeHtml(p.image_url || '')}"
-              data-description="${escapeHtml(p.description || '')}"
-            >Edit</button>
+            <button class="edit-btn text-blue-600 mr-2" data-id="${p.id}">Edit</button>
             <button class="delete-btn text-red-600" data-id="${p.id}">Delete</button>
           </td>
         </tr>
       `,
         )
         .join('');
+
+      // Store full product data for edit
+      window.__products = products;
       attachEvents();
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-red-600">Error: ${err.message}</td></tr>`;
@@ -289,17 +319,9 @@ import Search from '~/components/admin/Search.astro';
   function attachEvents() {
     document.querySelectorAll('.edit-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        openModal({
-          id: btn.getAttribute('data-id'),
-          model: btn.getAttribute('data-model'),
-          brand_id: btn.getAttribute('data-brand-id'),
-          category_id: btn.getAttribute('data-category-id'),
-          series_id: btn.getAttribute('data-series-id'),
-          price: btn.getAttribute('data-price'),
-          stock: btn.getAttribute('data-stock'),
-          image_url: btn.getAttribute('data-image-url'),
-          description: btn.getAttribute('data-description'),
-        });
+        const id = btn.getAttribute('data-id');
+        const product = window.__products?.find((p) => p.id === id);
+        if (product) openModal(product);
       });
     });
 
@@ -318,24 +340,34 @@ import Search from '~/components/admin/Search.astro';
     });
   }
 
-  function openModal(data = {}) {
+  function openModal(data: any = {}) {
     currentEditId = data.id || null;
     document.getElementById('product-id').value = data.id || '';
     document.getElementById('product-model').value = data.model || '';
-    document.getElementById('product-brand-id').value = data.brand_id || '';
+    document.getElementById('product-brand-id').value =
+      data.brand?.id || data.brand_id || '';
     document.getElementById('product-category-id').value =
-      data.category_id || '';
+      data.category?.id || data.category_id || '';
     document.getElementById('product-price').value = data.price || '';
     document.getElementById('product-stock').value = data.stock || '';
     document.getElementById('product-image-url').value = data.image_url || '';
     document.getElementById('product-description').value =
       data.description || '';
+    document.getElementById('product-description-html').value =
+      data.description_html || '';
     document.getElementById('modal-title').innerText = currentEditId
       ? 'Edit Product'
       : 'Add Product';
 
-    // Update series dropdown based on brand
-    updateSeriesDropdown(data.brand_id, data.series_id);
+    // Reset preview
+    const preview = document.getElementById('description-preview');
+    preview.classList.add('hidden');
+    preview.innerHTML = '';
+
+    updateSeriesDropdown(
+      data.brand?.id || data.brand_id,
+      data.series?.id || data.series_id,
+    );
 
     const modal = document.getElementById('product-modal');
     modal.classList.remove('hidden');
@@ -349,6 +381,11 @@ import Search from '~/components/admin/Search.astro';
     document.getElementById('product-form').reset();
     updateSeriesDropdown('');
     currentEditId = null;
+
+    // Reset preview
+    const preview = document.getElementById('description-preview');
+    preview.classList.add('hidden');
+    preview.innerHTML = '';
   }
 
   function init() {
@@ -359,32 +396,71 @@ import Search from '~/components/admin/Search.astro';
       .getElementById('modal-close')
       ?.addEventListener('click', closeModal);
 
-    // Update series when brand changes
     document
       .getElementById('product-brand-id')
       ?.addEventListener('change', (e) => {
-        updateSeriesDropdown(e.target.value);
+        updateSeriesDropdown((e.target as HTMLSelectElement).value);
       });
+
+    // HTML preview toggle
+    document.getElementById('preview-toggle')?.addEventListener('click', () => {
+      const preview = document.getElementById('description-preview');
+      const html = (
+        document.getElementById(
+          'product-description-html',
+        ) as HTMLTextAreaElement
+      ).value;
+      if (preview.classList.contains('hidden')) {
+        preview.innerHTML =
+          html || '<em class="text-gray-400">No HTML content</em>';
+        preview.classList.remove('hidden');
+        document.getElementById('preview-toggle').textContent = 'Hide Preview';
+      } else {
+        preview.classList.add('hidden');
+        preview.innerHTML = '';
+        document.getElementById('preview-toggle').textContent = 'Preview HTML';
+      }
+    });
 
     const form = document.getElementById('product-form');
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const model = document.getElementById('product-model').value.trim();
-        const brand_id = document.getElementById('product-brand-id').value;
-        const category_id = document.getElementById(
-          'product-category-id',
+
+        const model = (
+          document.getElementById('product-model') as HTMLInputElement
+        ).value.trim();
+        const brand_id = (
+          document.getElementById('product-brand-id') as HTMLSelectElement
+        ).value;
+        const category_id = (
+          document.getElementById('product-category-id') as HTMLSelectElement
         ).value;
         const series_id =
-          document.getElementById('product-series-id').value || undefined;
-        const price = document.getElementById('product-price').value;
-        const stock = document.getElementById('product-stock').value;
+          (document.getElementById('product-series-id') as HTMLSelectElement)
+            .value || undefined;
+        const price = (
+          document.getElementById('product-price') as HTMLInputElement
+        ).value;
+        const stock = (
+          document.getElementById('product-stock') as HTMLInputElement
+        ).value;
         const image_url =
-          document.getElementById('product-image-url').value.trim() ||
-          undefined;
+          (
+            document.getElementById('product-image-url') as HTMLInputElement
+          ).value.trim() || undefined;
         const description =
-          document.getElementById('product-description').value.trim() ||
-          undefined;
+          (
+            document.getElementById(
+              'product-description',
+            ) as HTMLTextAreaElement
+          ).value.trim() || undefined;
+        const description_html =
+          (
+            document.getElementById(
+              'product-description-html',
+            ) as HTMLTextAreaElement
+          ).value.trim() || undefined;
 
         if (!model) {
           alert('Model is required');
@@ -408,6 +484,7 @@ import Search from '~/components/admin/Search.astro';
           stock: stock ? Number(stock) : 0,
           image_url,
           description,
+          description_html,
         };
 
         try {
@@ -425,9 +502,11 @@ import Search from '~/components/admin/Search.astro';
     }
 
     document.addEventListener('admin:search', (e) => {
-      const query = e.detail.query.toLowerCase();
+      const query = (e as CustomEvent).detail.query.toLowerCase();
       document.querySelectorAll('#products-tbody tr').forEach((row) => {
-        row.style.display = row.textContent.toLowerCase().includes(query)
+        (row as HTMLElement).style.display = row.textContent
+          .toLowerCase()
+          .includes(query)
           ? ''
           : 'none';
       });
