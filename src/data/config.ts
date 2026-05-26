@@ -6,8 +6,9 @@
 export const siteLang = "id-ID";
 export const siteCurrency = "IDR";
 export const siteDomain = "prima-inti.com";
-export const siteDescription = "Prima Inti Electrical – quality electrical components and professional installation, maintenance, and consulting services.";
-export const siteName = "CV PRIMA INTI VANINDO";
+export const siteName = "CV Prima Inti Vanindo";
+export const siteSuffix = "Solusi Otomasi Industri Sidoarjo";
+export const siteDescription = "CV Prima Inti Vanindo – solusi otomasi industri, komponen elektrikal, perbaikan, dan pemrograman sistem untuk pabrik dan perusahaan di Indonesia.";
 export const siteSlogan = "Solusi Listrik untuk Industri dan Rumah";
 export const themeColor = "#1e3a8a";
 export const unitSystem = "metric";

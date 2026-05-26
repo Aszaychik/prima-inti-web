@@ -2,7 +2,13 @@
 import '~/styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import AuthHeader from '~/components/AuthHeader.astro';
-import { siteName, siteLang, themeColor, siteDescription } from '~/data/config';
+import {
+  siteName,
+  siteLang,
+  themeColor,
+  siteDescription,
+  siteSuffix,
+} from '~/data/config';
 
 // Props
 interface Props {
@@ -25,7 +31,9 @@ const {
 
 const finalDescription = metaDescription || description || siteDescription;
 const finalPageTitle = pageTitle || title;
-const fullTitle = finalPageTitle ? `${finalPageTitle} | ${siteName}` : siteName;
+const fullTitle = finalPageTitle
+  ? `${finalPageTitle} | ${siteName}`
+  : `${siteName} – ${siteSuffix}`;
 
 const baseUrl =
   import.meta.env.APP_URL || `${Astro.url.protocol}//${Astro.url.host}`;
