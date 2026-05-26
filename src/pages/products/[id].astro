@@ -7,7 +7,7 @@ import IconLogo from '~/assets/images/icons/logo.svg';
 import ButtonGoBack from '~/components/buttons/ButtonGoBack.astro';
 import ButtonInquire from '~/components/buttons/ButtonInquire.astro';
 
-export const prerender = false; // Fetch at request time
+export const prerender = false;
 
 const { id } = Astro.params;
 
@@ -18,7 +18,7 @@ let error = null;
 
 try {
   const response = await fetchData(`products/${id}`);
-  product = response.data || response; // Handle both {data: {...}} or direct object
+  product = response.data || response;
   if (!product || Object.keys(product).length === 0) {
     error = 'Product not found';
   }
@@ -36,11 +36,50 @@ const formatIDR = (value) => {
   if (!value && value !== 0) return null;
   return value.toLocaleString('id-ID');
 };
+
+// Strip HTML tags for meta description
+const stripHtml = (html: string) => html?.replace(/<[^>]*>/g, '').trim() ?? '';
+
+// Plain text description for SEO (max 160 chars)
+const plainDescription = product.description_html
+  ? stripHtml(product.description_html).slice(0, 160)
+  : product.description?.slice(0, 160);
+
+// JSON-LD Product schema
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: product.model,
+  description: plainDescription,
+  brand: {
+    '@type': 'Brand',
+    name: product.brand?.name ?? '',
+  },
+  ...(product.image_url && { image: product.image_url }),
+  ...(product.category?.name && { category: product.category.name }),
+  offers: {
+    '@type': 'Offer',
+    priceCurrency: 'IDR',
+    ...(product.salePrice || product.price
+      ? { price: product.salePrice || product.price }
+      : {}),
+    availability:
+      product.stock > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+    seller: {
+      '@type': 'Organization',
+      name: 'CV Prima Inti Vanindo',
+    },
+  },
+};
 ---
 
 <Layout
   pageTitle={`${product.model} | ${product.brand?.name || 'Product'}`}
-  description={product.description}
+  description={plainDescription}
+  ogImage={product.image_url}
+  schema={productSchema}
 >
   <Section class:list="bg-gray-50">
     <Container class:list="pb-0 lg:pb-0 max-sm:pt-8 print:hidden">
@@ -56,7 +95,7 @@ const formatIDR = (value) => {
               product.image_url ? (
                 <img
                   src={product.image_url}
-                  alt={product.model}
+                  alt={`${product.model} – ${product.brand?.name ?? ''}`}
                   class="w-full h-auto object-contain"
                   loading="eager"
                 />
@@ -72,89 +111,100 @@ const formatIDR = (value) => {
           </div>
 
           <!-- Product info -->
-          <div>
-            <div class="p-4 lg:p-8 flex flex-col items-start h-full">
-              <div class="mb-4 lg:mb-6">
-                <h1 class="h4">{product.model}</h1>
-                {
-                  product.series?.name && (
-                    <span class="text-base text-gray-600">
-                      Series: {product.series.name}
-                    </span>
-                  )
-                }
-                <p class="mt-8">{product.description}</p>
-              </div>
+          <div class="p-4 lg:p-8 flex flex-col items-start h-full">
+            <!-- Title & series -->
+            <div class="mb-4 lg:mb-6">
+              <h1 class="h4">{product.model}</h1>
+              {
+                product.series?.name && (
+                  <span class="text-base text-gray-600">
+                    Series: {product.series.name}
+                  </span>
+                )
+              }
+            </div>
 
-              <hr class="w-full border-gray-200" />
+            <hr class="w-full border-gray-200" />
 
-              <!-- Price & stock -->
-              <div class="my-4">
-                {
-                  product.salePrice ? (
-                    <>
-                      <span class="text-gray-400 line-through text-lg">
-                        Rp{formatIDR(product.price)}
-                      </span>
-                      <span class="text-2xl font-bold text-green-600 ml-3">
-                        Rp{formatIDR(product.salePrice)}
-                      </span>
-                    </>
-                  ) : product.price ? (
-                    <span class="text-2xl font-bold text-green-600">
+            <!-- Price & stock -->
+            <div class="my-4">
+              {
+                product.salePrice ? (
+                  <>
+                    <span class="text-gray-400 line-through text-lg">
                       Rp{formatIDR(product.price)}
                     </span>
-                  ) : (
-                    <span class="text-gray-500">Call for price</span>
-                  )
-                }
-                <p
-                  class={`text-sm mt-1 ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}
-                >
-                  Stock: {product.stock > 0 ? product.stock : 'Out of stock'}
-                </p>
-              </div>
-
-              <hr class="w-full border-gray-200" />
-
-              <!-- Specifications (brand, category, series, model) -->
-              <div class="mt-4 w-full">
-                <h2 class="h6">Specifications</h2>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
-                  <li><strong>Brand:</strong> {product.brand?.name || '—'}</li>
-                  <li>
-                    <strong>Category:</strong>
-                    {product.category?.name || '—'}
-                  </li>
-                  <li>
-                    <strong>Series:</strong>
-                    {product.series?.name || '—'}
-                  </li>
-                  <li><strong>Model:</strong> {product.model}</li>
-                </ul>
-              </div>
-
-              <hr class="w-full mt-auto border-gray-200" />
-
-              <!-- Action buttons (only inquire now) -->
-              <div
-                class="flex flex-col sm:flex-row sm:items-center gap-x-4 mt-8 w-full max-sm:gap-y-8 print:hidden"
+                    <span class="text-2xl font-bold text-green-600 ml-3">
+                      Rp{formatIDR(product.salePrice)}
+                    </span>
+                  </>
+                ) : product.price ? (
+                  <span class="text-2xl font-bold text-green-600">
+                    Rp{formatIDR(product.price)}
+                  </span>
+                ) : (
+                  <span class="text-gray-500 italic">
+                    Hubungi kami untuk harga
+                  </span>
+                )
+              }
+              <p
+                class={`text-sm mt-1 ${product.stock > 0 ? 'text-green-600' : 'text-red-600'}`}
               >
-                <div
-                  class="flex items-center max-sm:justify-center gap-x-4 w-full"
-                >
-                  <ButtonInquire companyProfile={companyProfile} />
-                </div>
+                {product.stock > 0 ? `Stok: ${product.stock}` : 'Stok habis'}
+              </p>
+            </div>
+
+            <hr class="w-full border-gray-200" />
+
+            <!-- Specifications -->
+            <div class="mt-4 w-full">
+              <h2 class="h6">Spesifikasi</h2>
+              <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-sm">
+                <li><strong>Brand:</strong> {product.brand?.name || '—'}</li>
+                <li>
+                  <strong>Kategori:</strong>
+                  {product.category?.name || '—'}
+                </li>
+                <li><strong>Series:</strong> {product.series?.name || '—'}</li>
+                <li><strong>Model:</strong> {product.model}</li>
+              </ul>
+            </div>
+
+            <hr class="w-full border-gray-200 mt-4" />
+
+            <!-- Action buttons -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center gap-x-4 mt-8 w-full max-sm:gap-y-8 print:hidden"
+            >
+              <div
+                class="flex items-center max-sm:justify-center gap-x-4 w-full"
+              >
+                <ButtonInquire companyProfile={companyProfile} />
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Description (HTML or plain text) -->
+        {
+          (product.description_html || product.description) && (
+            <div class="p-4 lg:p-8 border-t border-gray-200">
+              <h2 class="h6 mb-4">Deskripsi Produk</h2>
+              <div
+                class="prose prose-sm prose-headings:font-semibold prose-headings:text-gray-800 prose-li:marker:text-blue-900 prose-strong:text-gray-800 max-w-none text-gray-600"
+                set:html={
+                  product.description_html || `<p>${product.description}</p>`
+                }
+              />
+            </div>
+          )
+        }
       </div>
     </Container>
   </Section>
 </Layout>
 
 <script>
-  // Simple script to handle any modal or gallery if needed in the future
   document.addEventListener('astro:page-load', () => {});
 </script>
