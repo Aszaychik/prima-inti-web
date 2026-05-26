@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.API_URL || 'http://localhost:8080/api/v1';
+const API_URL = import.meta.env.PUBLIC_API_URL || import.meta.env.API_URL;
 
 const ACCESS_TOKEN_KEY = 'admin_access_token';
 const REFRESH_TOKEN_KEY = 'admin_refresh_token';
