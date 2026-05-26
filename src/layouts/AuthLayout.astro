@@ -19,14 +19,16 @@ const {
   title,
   description,
   metaDescription,
-  noindex = false,
+  noindex = true, // Auth pages default noindex
   requireAuth = true,
 } = Astro.props;
 
 const finalDescription = metaDescription || description || siteDescription;
 const finalPageTitle = pageTitle || title;
 const fullTitle = finalPageTitle ? `${finalPageTitle} | ${siteName}` : siteName;
-const baseUrl = `${Astro.url.protocol}//${Astro.url.host}`;
+
+const baseUrl =
+  import.meta.env.APP_URL || `${Astro.url.protocol}//${Astro.url.host}`;
 const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
 ---
 
@@ -37,7 +39,8 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content={themeColor} />
     <meta name="description" content={finalDescription} />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <!-- Auth pages should not be indexed -->
+    <meta name="robots" content="noindex,nofollow" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="author" href="humans.txt" />
 
@@ -82,10 +85,8 @@ const canonicalURL = new URL(Astro.url.pathname, baseUrl).href;
     }
   }
 
-  // Check on first load
   checkAuth();
 
-  // Re-check on every client-side navigation
   document.addEventListener('astro:after-swap', () => {
     checkAuth();
     scrollTo({ top: history.state.scrollY, behavior: 'instant' });
