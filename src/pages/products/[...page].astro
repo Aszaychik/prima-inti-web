@@ -38,8 +38,11 @@ const filterCategoryId = searchParams.get('category') || 'all';
 const filterSeriesId = searchParams.get('series') || 'all';
 const filterModel = searchParams.get('model') || 'all';
 
-// Apply filters
-let filteredProducts = allProducts;
+// Apply filters sort newest first
+let filteredProducts = allProducts.sort(
+  (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+);
+
 if (filterBrandId !== 'all') {
   filteredProducts = filteredProducts.filter(
     (p) => p.brand.id === filterBrandId,
