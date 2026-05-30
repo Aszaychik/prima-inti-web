@@ -22,7 +22,7 @@ import ImageTwo from '~/assets/images/pexels-pixabay-159201.jpg';
 const companyProfile = await fetchData('company-profile');
 
 const metaDescription =
-  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen, perbaikan, dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
+  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
 ---
 
 <Layout pageTitle="Beranda" metaDescription={metaDescription}>
@@ -41,10 +41,10 @@ const metaDescription =
           Solusi Otomasi Industri Terpercaya
         </h1>
         <p slot="heading-content">
-          Mitra andal Anda untuk layanan perbaikan, penjualan, dan pemrograman
-          sistem industri – dari servo drive, inverter, PLC, HMI, hingga panel
-          kontrol. Lihat katalog produk atau konsultasikan kebutuhan proyek Anda
-          dengan tim teknis kami.
+          Mitra andal Anda untuk layanan penjualan, dan pemrograman sistem
+          industri – dari servo drive, inverter, PLC, HMI, hingga panel kontrol.
+          Lihat katalog produk atau konsultasikan kebutuhan proyek Anda dengan
+          tim teknis kami.
         </p>
       </Heading>
       <WidgetSearch />
@@ -111,13 +111,13 @@ const metaDescription =
         <GridItem
           image={ImageTwo}
           imageAlt="Teknisi sedang melakukan perawatan"
-          link="/services"
+          link={`https://wa.me/${companyProfile.phone}`}
           As="a"
         >
           <h3>Layanan profesional</h3>
           <p>
-            Perbaikan, instalasi, pemeliharaan preventif, diagnosis kerusakan,
-            dan upgrade sistem – untuk pabrik, gedung perkantoran, dan rumah.
+            Instalasi, pemeliharaan preventif, diagnosis kerusakan, dan upgrade
+            sistem – untuk pabrik, gedung perkantoran, dan rumah.
           </p>
           <Button
             As="button"
@@ -307,11 +307,6 @@ const metaDescription =
             question: 'Merek apa saja yang Anda sediakan?',
             answer:
               'Kami menyediakan merek-merek terkemuka seperti ABB, Siemens, Schneider Electric, Mitsubishi Electric, Yaskawa, Omron, Allen Bradley, Danfoss, Lenze, Fanuc, Eaton dan lainnya. Hubungi kami untuk permintaan merek tertentu.',
-          },
-          {
-            question: 'Apakah Anda menyediakan layanan perbaikan darurat?',
-            answer:
-              'Ya – kami memiliki hotline darurat 24/7 untuk kerusakan kritis. Tim kami akan segera datang ke lokasi.',
           },
         ]}
       />

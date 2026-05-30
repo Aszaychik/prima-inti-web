@@ -8,7 +8,7 @@ export const siteCurrency = "IDR";
 export const siteDomain = "prima-inti.com";
 export const siteName = "CV Prima Inti Vanindo";
 export const siteSuffix = "Solusi Otomasi Industri Sidoarjo";
-export const siteDescription = "CV Prima Inti Vanindo – solusi otomasi industri, komponen elektrikal, perbaikan, dan pemrograman sistem untuk pabrik dan perusahaan di Indonesia.";
+export const siteDescription = "CV Prima Inti Vanindo – solusi otomasi industri, komponen elektrikal dan pemrograman sistem untuk pabrik dan perusahaan di Indonesia.";
 export const siteSlogan = "Solusi Listrik untuk Industri dan Rumah";
 export const themeColor = "#1e3a8a";
 export const unitSystem = "metric";
@@ -23,8 +23,8 @@ export const phone = {
 };
 
 export const email = {
-  href: "mailto:aszaychik@gmail.com",
-  label: "aszaychik@gmail.com",
+  href: "mailto:marketing.primainti@gmail.com",
+  label: "marketing.primainti@gmail.com",
 };
 
 export const address = {
