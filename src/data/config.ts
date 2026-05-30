@@ -18,7 +18,7 @@ export const priceSteps = [100000, 500000, 1000000, 5000000];
 
 // Contact information
 export const phone = {
-  href: "tel:+6289519750202",
+  href: "tel:+628131834322",
   label: "+62 895-1975-0202",
 };
 
