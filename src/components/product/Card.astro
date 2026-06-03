@@ -41,7 +41,7 @@ const { product, companyProfile } = Astro.props;
           <h2 class="h5 line-clamp-2">
             {product.model}
             {
-              product.series.name && (
+              product.series?.name && (
                 <span class="text-base max-xl:block xl:ml-2 text-gray-800 font-normal align-middle">
                   {product.series.name}
                 </span>
