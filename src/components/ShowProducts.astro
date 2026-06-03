@@ -17,9 +17,6 @@ const {
   ui = 'list',
 } = Astro.props;
 
-const responseCompanyProfile = await fetchData('company-profile');
-const companyProfile = responseCompanyProfile.data || {};
-
 let products = [];
 
 async function getAllProducts() {
@@ -52,9 +49,9 @@ const wrapperClasses = {
   {
     products.map((product: any) =>
       ui === 'grid' ? (
-        <ProductCardAlt product={product} companyProfile={companyProfile} />
+        <ProductCardAlt product={product} />
       ) : (
-        <ProductCard product={product} companyProfile={companyProfile} />
+        <ProductCard product={product} />
       ),
     )
   }

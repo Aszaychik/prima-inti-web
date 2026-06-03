@@ -1,7 +1,7 @@
 ---
 import CardPrice from '~/components/product/CardPrice.astro';
 import CardHighlights from '~/components/product/CardHighlights.astro';
-const { product, companyProfile } = Astro.props;
+const { product } = Astro.props;
 ---
 
 <li
@@ -22,8 +22,8 @@ const { product, companyProfile } = Astro.props;
         ) : (
           <div class="absolute inset-0 text-gray-400 size-full bg-gray-100 flex flex-col gap-4 items-center justify-center">
             <img
-              src={companyProfile.logo_url}
-              alt={companyProfile.name}
+              src="https://placehold.net/product-400x400.png"
+              alt={product.model}
               class="h-24"
             />
             <span class="text-gray-400 font-bold italic">Coming Soon</span>
