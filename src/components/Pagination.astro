@@ -23,31 +23,36 @@ function generatePaginationRange(
   return range;
 }
 
-const paginationRange = generatePaginationRange(page, totalPages);
+// Smaller delta on mobile (fewer numbers), more on desktop
+const mobileRange = generatePaginationRange(page, totalPages, 1);
+const desktopRange = generatePaginationRange(page, totalPages, 2);
 
 function generateUrl(pageNum: number | string) {
   const newParams = new URLSearchParams(searchParams);
   newParams.set('page', pageNum.toString());
-  // Use relative query string – works on /products, /cars, or any route
   return `?${newParams.toString()}`;
 }
 ---
 
-<div class="mt-8 bg-white ring-1 ring-gray-100 py-4">
-  <nav class="flex items-center justify-between px-8 font-medium text-base">
+<div class="mt-8 bg-white ring-1 ring-gray-100 py-3">
+  <nav
+    class="flex items-center justify-between px-4 sm:px-8 font-medium text-base"
+    aria-label="Pagination"
+  >
+    <!-- Previous -->
     <div class="flex w-0 flex-1">
       {
-        page > 1 && (
+        page > 1 ? (
           <a
             href={generateUrl(page - 1)}
-            class="inline-flex items-center transition hover:lg:-translate-x-1 py-1 -my-1"
+            class="inline-flex items-center gap-2 transition hover:lg:-translate-x-1 py-1 -my-1 text-sm sm:text-base"
+            aria-label="Previous page"
           >
             <svg
-              class="mr-3 size-6"
+              class="size-5 shrink-0"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
-              data-slot="icon"
             >
               <path
                 fill-rule="evenodd"
@@ -55,23 +60,38 @@ function generateUrl(pageNum: number | string) {
                 clip-rule="evenodd"
               />
             </svg>
-            Previous
+            <span class="hidden sm:inline">Previous</span>
           </a>
+        ) : (
+          <span class="inline-flex items-center gap-2 text-gray-300 text-sm sm:text-base cursor-not-allowed">
+            <svg
+              class="size-5 shrink-0"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M18 10a.75.75 0 0 1-.75.75H4.66l2.1 1.95a.75.75 0 1 1-1.02 1.1l-3.5-3.25a.75.75 0 0 1 0-1.1l3.5-3.25a.75.75 0 1 1 1.02 1.1l-2.1 1.95h12.59A.75.75 0 0 1 18 10Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span class="hidden sm:inline">Previous</span>
+          </span>
         )
       }
     </div>
 
-    <div class="hidden md:flex text-lg gap-x-2">
+    <!-- Page numbers: mobile (delta=1, size-8) -->
+    <div class="flex sm:hidden items-center gap-1 text-sm">
       {
-        paginationRange.map((pageNumber) =>
+        mobileRange.map((pageNumber) =>
           pageNumber === '...' ? (
-            <span class="inline-flex items-center px-4 py-1.5 text-gray-500">
-              ...
-            </span>
+            <span class="px-1 text-gray-400">…</span>
           ) : (
             <a
               href={generateUrl(pageNumber)}
-              class={`inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${pageNumber === page ? 'bg-yellow-200' : 'hover:bg-gray-100'}`}
+              class={`inline-flex items-center justify-center size-8 rounded-full transition ${pageNumber === page ? 'bg-yellow-200 font-bold' : 'hover:bg-gray-100'}`}
               aria-current={pageNumber === page ? 'page' : undefined}
             >
               {pageNumber}
@@ -81,20 +101,40 @@ function generateUrl(pageNum: number | string) {
       }
     </div>
 
+    <!-- Page numbers: desktop (delta=2, size-10) -->
+    <div class="hidden sm:flex items-center gap-1 text-base">
+      {
+        desktopRange.map((pageNumber) =>
+          pageNumber === '...' ? (
+            <span class="px-2 text-gray-400">…</span>
+          ) : (
+            <a
+              href={generateUrl(pageNumber)}
+              class={`inline-flex items-center justify-center size-10 rounded-full transition ${pageNumber === page ? 'bg-yellow-200 font-bold' : 'hover:bg-gray-100'}`}
+              aria-current={pageNumber === page ? 'page' : undefined}
+            >
+              {pageNumber}
+            </a>
+          ),
+        )
+      }
+    </div>
+
+    <!-- Next -->
     <div class="flex w-0 flex-1 justify-end">
       {
-        page < totalPages && (
+        page < totalPages ? (
           <a
             href={generateUrl(page + 1)}
-            class="inline-flex items-center transition hover:lg:translate-x-1 py-1 -my-1"
+            class="inline-flex items-center gap-2 transition hover:lg:translate-x-1 py-1 -my-1 text-sm sm:text-base"
+            aria-label="Next page"
           >
-            Next
+            <span class="hidden sm:inline">Next</span>
             <svg
-              class="ml-3 size-5"
+              class="size-5 shrink-0"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
-              data-slot="icon"
             >
               <path
                 fill-rule="evenodd"
@@ -103,6 +143,22 @@ function generateUrl(pageNum: number | string) {
               />
             </svg>
           </a>
+        ) : (
+          <span class="inline-flex items-center gap-2 text-gray-300 text-sm sm:text-base cursor-not-allowed">
+            <span class="hidden sm:inline">Next</span>
+            <svg
+              class="size-5 shrink-0"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
         )
       }
     </div>
