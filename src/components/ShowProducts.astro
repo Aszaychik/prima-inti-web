@@ -24,7 +24,11 @@ async function getAllProducts() {
   return response.data || [];
 }
 
-if (recent || featured) {
+if (featured) {
+  const all = await getAllProducts();
+  // Randomize so every page load shows different products
+  products = all.sort(() => Math.random() - 0.5).slice(0, 3);
+} else if (recent) {
   const all = await getAllProducts();
   products = all
     .sort(
