@@ -18,11 +18,12 @@ import { fetchData } from '~/services/api';
 import ImageHeadingBackground from '~/assets/images/pexels-fox-58267-26510348.jpg';
 import ImageOne from '~/assets/images/pexels-freek-wolsink-508219-34194580.jpg';
 import ImageTwo from '~/assets/images/pexels-pixabay-159201.jpg';
+import ImageBanner from '~/assets/images/imgheader.png';
 
 const companyProfile = await fetchData('company-profile');
 
 const metaDescription =
-  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
+  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen, dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
 ---
 
 <Layout pageTitle="Beranda" metaDescription={metaDescription}>
@@ -48,6 +49,22 @@ const metaDescription =
         </p>
       </Heading>
       <WidgetSearch />
+    </Container>
+  </Section>
+
+  {/* Company Banner */}
+  <Section class:list={'bg-white border-b border-gray-100'}>
+    <Container class:list={'py-0 lg:py-0'}>
+      <div class="overflow-hidden rounded-none sm:rounded-xl shadow-sm">
+        <Image
+          src={ImageBanner}
+          alt="CV Prima Inti Vanindo – Spesialis Automasi, Service & Supply, Sidoarjo Jawa Timur"
+          class="w-full h-auto object-cover"
+          loading="eager"
+          widths={[640, 1024, 1536]}
+          sizes="100vw"
+        />
+      </div>
     </Container>
   </Section>
 
@@ -134,7 +151,7 @@ const metaDescription =
             komponen yang tepat.
           </p>
           <span
-            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-300 group-hover:text-gray-500 transition-colors"
+            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-500 group-hover:text-gray-800 transition-colors"
           >
             Hubungi kami
             <svg
