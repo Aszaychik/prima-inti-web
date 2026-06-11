@@ -91,7 +91,7 @@ function generateUrl(pageNum: number | string) {
           ) : (
             <a
               href={generateUrl(pageNumber)}
-              class={`inline-flex items-center justify-center size-8 rounded-full transition ${pageNumber === page ? 'bg-yellow-200 font-bold' : 'hover:bg-gray-100'}`}
+              class={`inline-flex items-center justify-center size-8 rounded-full transition ${pageNumber === page ? 'bg-blue-950 text-white font-bold' : 'hover:bg-gray-100'}`}
               aria-current={pageNumber === page ? 'page' : undefined}
             >
               {pageNumber}
@@ -110,7 +110,7 @@ function generateUrl(pageNum: number | string) {
           ) : (
             <a
               href={generateUrl(pageNumber)}
-              class={`inline-flex items-center justify-center size-10 rounded-full transition ${pageNumber === page ? 'bg-yellow-200 font-bold' : 'hover:bg-gray-100'}`}
+              class={`inline-flex items-center justify-center size-10 rounded-full transition ${pageNumber === page ? 'bg-blue-950 text-white font-bold' : 'hover:bg-gray-100'}`}
               aria-current={pageNumber === page ? 'page' : undefined}
             >
               {pageNumber}

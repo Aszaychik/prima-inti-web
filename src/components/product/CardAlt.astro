@@ -5,7 +5,7 @@ const { product } = Astro.props;
 ---
 
 <li
-  class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-b-4 hover:lg:border-yellow-300"
+  class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-b-4 hover:lg:border-blue-950"
 >
   <a
     href={`/products/${product.id}`}
@@ -46,11 +46,11 @@ const { product } = Astro.props;
           </h2>
           <p class="text-base mt-2 line-clamp-3">{product.description}</p>
         </div>
-        <CardPrice product={product} />
+        <!-- <CardPrice product={product} /> -->
       </div>
-      <div class="mt-auto lg:mb-4">
+      <!-- <div class="mt-auto lg:mb-4">
         <CardHighlights product={product} />
-      </div>
+      </div> -->
     </div>
   </a>
 </li>
