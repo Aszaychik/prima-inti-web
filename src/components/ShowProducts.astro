@@ -25,11 +25,7 @@ async function getAllProducts() {
   return response.data || [];
 }
 
-if (featured) {
-  const all = await getAllProducts();
-  // Randomize so every page load shows different products
-  products = all.sort(() => Math.random() - 0.5).slice(0, totalProducts);
-} else if (recent) {
+if (recent) {
   const all = await getAllProducts();
   products = all
     .sort(
@@ -39,7 +35,10 @@ if (featured) {
     .slice(0, totalProducts);
 } else if (slugs.length > 0) {
   const all = await getAllProducts();
-  products = all.filter((p: any) => slugs.includes(p.id));
+  products = all.filter(
+    (p: any) =>
+      slugs.includes(p.id) || slugs.includes(p.name) || slugs.includes(p.model),
+  );
 } else {
   return;
 }
