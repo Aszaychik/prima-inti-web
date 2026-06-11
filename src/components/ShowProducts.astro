@@ -15,6 +15,7 @@ const {
   featured = false,
   slugs = [],
   ui = 'list',
+  totalProducts = 3,
 } = Astro.props;
 
 let products = [];
@@ -27,7 +28,7 @@ async function getAllProducts() {
 if (featured) {
   const all = await getAllProducts();
   // Randomize so every page load shows different products
-  products = all.sort(() => Math.random() - 0.5).slice(0, 3);
+  products = all.sort(() => Math.random() - 0.5).slice(0, totalProducts);
 } else if (recent) {
   const all = await getAllProducts();
   products = all
@@ -35,7 +36,7 @@ if (featured) {
       (a: any, b: any) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     )
-    .slice(0, 3);
+    .slice(0, totalProducts);
 } else if (slugs.length > 0) {
   const all = await getAllProducts();
   products = all.filter((p: any) => slugs.includes(p.id));
