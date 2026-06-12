@@ -419,120 +419,176 @@ const metaDescription =
 </Layout>
 
 <script>
-  // Carousel functionality for main banner (existing)
-  (function () {
+  // ── Cleanup registry ────────────────────────────────────────────────────────
+  let bannerCleanup = null;
+  let brandsCleanup = null;
+
+  // ── Banner carousel ─────────────────────────────────────────────────────────
+  function initBannerCarousel() {
+    if (bannerCleanup) {
+      bannerCleanup();
+      bannerCleanup = null;
+    }
+
     const track = document.getElementById('carousel-track');
-    if (!track) return;
-
-    const slides = track.children;
-    const totalSlides = slides.length;
-    let currentIndex = 0;
-    let autoPlayInterval;
-
     const prevBtn = document.getElementById('carousel-prev');
     const nextBtn = document.getElementById('carousel-next');
     const dots = document.querySelectorAll('.carousel-dot');
+    const carousel = document.getElementById('banner-carousel');
 
-    function updateCarousel() {
-      const offset = -currentIndex * 100;
-      track.style.transform = `translateX(${offset}%)`;
+    if (!track) return;
 
-      dots.forEach((dot, idx) => {
-        if (idx === currentIndex) {
-          dot.classList.remove('bg-white/40');
-          dot.classList.add('bg-white');
-        } else {
-          dot.classList.remove('bg-white');
-          dot.classList.add('bg-white/40');
-        }
+    const totalSlides = track.children.length;
+    let currentIndex = 0;
+    let timer = null;
+
+    function goTo(index) {
+      currentIndex = (index + totalSlides) % totalSlides;
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('bg-white', i === currentIndex);
+        dot.classList.toggle('bg-white/40', i !== currentIndex);
       });
     }
 
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % totalSlides;
-      updateCarousel();
-      resetAutoPlay();
+    function next() {
+      goTo(currentIndex + 1);
+    }
+    function prev() {
+      goTo(currentIndex - 1);
     }
 
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-      updateCarousel();
-      resetAutoPlay();
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(next, 5000);
     }
 
-    function startAutoPlay() {
-      autoPlayInterval = setInterval(nextSlide, 5000);
-    }
-
-    function resetAutoPlay() {
-      if (autoPlayInterval) {
-        clearInterval(autoPlayInterval);
-        startAutoPlay();
+    function stopAuto() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
       }
     }
 
-    if (prevBtn && nextBtn) {
-      prevBtn.addEventListener('click', prevSlide);
-      nextBtn.addEventListener('click', nextSlide);
-    }
+    prevBtn?.addEventListener('click', () => {
+      prev();
+      startAuto();
+    });
+    nextBtn?.addEventListener('click', () => {
+      next();
+      startAuto();
+    });
 
     dots.forEach((dot, i) => {
       dot.addEventListener('click', () => {
-        currentIndex = i;
-        updateCarousel();
-        resetAutoPlay();
+        goTo(i);
+        startAuto();
       });
     });
 
-    startAutoPlay();
+    carousel?.addEventListener('mouseenter', stopAuto);
+    carousel?.addEventListener('mouseleave', startAuto);
 
-    const carousel = document.getElementById('banner-carousel');
-    if (carousel) {
-      carousel.addEventListener('mouseenter', () => {
-        if (autoPlayInterval) clearInterval(autoPlayInterval);
-      });
-      carousel.addEventListener('mouseleave', startAutoPlay);
-    }
-  })();
-
-  // Brands carousel (marquee) - auto move slowly
-  (function () {
-    const track = document.getElementById('brands-carousel-track');
-    if (!track) return;
-
-    let animationId = null;
-    let currentTranslate = 0;
-    let isPaused = false;
-    let speed = 0.5; // pixels per frame (slow)
-
-    // Get the total width of original set (half of track)
-    const originalWidth = track.scrollWidth / 2;
-
-    function step(timestamp) {
-      if (!isPaused) {
-        // Move left
-        currentTranslate -= speed;
-        // Reset when we've moved one full set
-        if (Math.abs(currentTranslate) >= originalWidth) {
-          currentTranslate += originalWidth;
+    // Touch swipe support
+    let touchStartX = 0;
+    carousel?.addEventListener(
+      'touchstart',
+      (e) => {
+        touchStartX = e.touches[0].clientX;
+      },
+      { passive: true },
+    );
+    carousel?.addEventListener(
+      'touchend',
+      (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          diff > 0 ? next() : prev();
+          startAuto();
         }
-        track.style.transform = `translateX(${currentTranslate}px)`;
-      }
-      animationId = requestAnimationFrame(step);
+      },
+      { passive: true },
+    );
+
+    goTo(0);
+    startAuto();
+
+    bannerCleanup = () => {
+      stopAuto();
+      carousel?.removeEventListener('mouseenter', stopAuto);
+      carousel?.removeEventListener('mouseleave', startAuto);
+    };
+  }
+
+  // ── Brands marquee ──────────────────────────────────────────────────────────
+  function initBrandsMarquee() {
+    if (brandsCleanup) {
+      brandsCleanup();
+      brandsCleanup = null;
     }
 
-    // Pause on hover
+    const track = document.getElementById('brands-carousel-track');
     const container = document.getElementById('brands-carousel-container');
-    if (container) {
-      container.addEventListener('mouseenter', () => {
-        isPaused = true;
-      });
-      container.addEventListener('mouseleave', () => {
-        isPaused = false;
-      });
+    if (!track || !container) return;
+
+    let raf = null;
+    let isPaused = false;
+    let translate = 0;
+    let halfWidth = 0;
+    const speed = 0.5;
+
+    function measure() {
+      // Half = one set of brands (track contains 2 identical sets)
+      halfWidth = track.scrollWidth / 2;
     }
 
-    // Start animation
-    animationId = requestAnimationFrame(step);
-  })();
+    function step() {
+      if (!isPaused && halfWidth > 0) {
+        translate -= speed;
+        if (Math.abs(translate) >= halfWidth) translate += halfWidth;
+        track.style.transform = `translateX(${translate}px)`;
+      }
+      raf = requestAnimationFrame(step);
+    }
+
+    function pause() {
+      isPaused = true;
+    }
+    function resume() {
+      isPaused = false;
+    }
+
+    container.addEventListener('mouseenter', pause);
+    container.addEventListener('mouseleave', resume);
+
+    // Measure after images may have loaded
+    if (document.readyState === 'complete') {
+      measure();
+    } else {
+      window.addEventListener('load', measure, { once: true });
+    }
+
+    // Fallback: measure after short delay for already-loaded pages
+    setTimeout(measure, 300);
+
+    raf = requestAnimationFrame(step);
+
+    brandsCleanup = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+      container.removeEventListener('mouseenter', pause);
+      container.removeEventListener('mouseleave', resume);
+    };
+  }
+
+  // ── Bootstrap ───────────────────────────────────────────────────────────────
+  function init() {
+    initBannerCarousel();
+    initBrandsMarquee();
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
 </script>
