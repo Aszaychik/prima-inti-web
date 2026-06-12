@@ -153,7 +153,7 @@ const metaDescription =
         featured={true}
         ui="grid"
         slugs={[
-          'i700 Cabinet',
+          'Inverter',
           'b4e14e4a-b85e-4b76-89bf-855ad20fcb68',
           'R88D-KP',
           'cdf8c229-fa79-4f01-9c07-19efd431ab32',
@@ -419,7 +419,6 @@ const metaDescription =
 </Layout>
 
 <script>
-  // ── Cleanup registry ────────────────────────────────────────────────────────
   let bannerCleanup = null;
   let brandsCleanup = null;
 
@@ -435,16 +434,24 @@ const metaDescription =
     const nextBtn = document.getElementById('carousel-next');
     const dots = document.querySelectorAll('.carousel-dot');
     const carousel = document.getElementById('banner-carousel');
+    const viewport = track?.parentElement; // the overflow-hidden div
 
-    if (!track) return;
+    if (!track || !viewport) return;
 
     const totalSlides = track.children.length;
     let currentIndex = 0;
     let timer = null;
 
+    // KEY FIX: use px not % —
+    // translateX(%) is relative to the element's OWN width (= all slides combined),
+    // so -100% overshoots by totalSlides×. Pixels use the visible container width.
+    function slideWidth() {
+      return viewport.offsetWidth;
+    }
+
     function goTo(index) {
       currentIndex = (index + totalSlides) % totalSlides;
-      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      track.style.transform = `translateX(-${currentIndex * slideWidth()}px)`;
       dots.forEach((dot, i) => {
         dot.classList.toggle('bg-white', i === currentIndex);
         dot.classList.toggle('bg-white/40', i !== currentIndex);
@@ -457,18 +464,20 @@ const metaDescription =
     function prev() {
       goTo(currentIndex - 1);
     }
-
-    function startAuto() {
-      stopAuto();
-      timer = setInterval(next, 5000);
-    }
-
     function stopAuto() {
       if (timer) {
         clearInterval(timer);
         timer = null;
       }
     }
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(next, 5000);
+    }
+
+    // Re-snap to correct position on window resize
+    const onResize = () => goTo(currentIndex);
+    window.addEventListener('resize', onResize);
 
     prevBtn?.addEventListener('click', () => {
       prev();
@@ -489,7 +498,7 @@ const metaDescription =
     carousel?.addEventListener('mouseenter', stopAuto);
     carousel?.addEventListener('mouseleave', startAuto);
 
-    // Touch swipe support
+    // Touch swipe
     let touchStartX = 0;
     carousel?.addEventListener(
       'touchstart',
@@ -515,6 +524,7 @@ const metaDescription =
 
     bannerCleanup = () => {
       stopAuto();
+      window.removeEventListener('resize', onResize);
       carousel?.removeEventListener('mouseenter', stopAuto);
       carousel?.removeEventListener('mouseleave', startAuto);
     };
@@ -538,7 +548,6 @@ const metaDescription =
     const speed = 0.5;
 
     function measure() {
-      // Half = one set of brands (track contains 2 identical sets)
       halfWidth = track.scrollWidth / 2;
     }
 
@@ -551,24 +560,21 @@ const metaDescription =
       raf = requestAnimationFrame(step);
     }
 
-    function pause() {
+    const pause = () => {
       isPaused = true;
-    }
-    function resume() {
+    };
+    const resume = () => {
       isPaused = false;
-    }
+    };
 
     container.addEventListener('mouseenter', pause);
     container.addEventListener('mouseleave', resume);
 
-    // Measure after images may have loaded
     if (document.readyState === 'complete') {
       measure();
     } else {
       window.addEventListener('load', measure, { once: true });
     }
-
-    // Fallback: measure after short delay for already-loaded pages
     setTimeout(measure, 300);
 
     raf = requestAnimationFrame(step);
