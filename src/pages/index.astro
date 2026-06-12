@@ -321,53 +321,42 @@ const metaDescription =
         >
           <div class="flex" id="brands-carousel-track">
             {/* Original brands */}
-            {brands.data.map((brand) => (
-              <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
-                <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
-                  {brand.logo_url ? (
+            {brands.data
+              .filter((brand) => brand.logo_url)
+              .map((brand) => (
+                <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
+                  <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
                     <img
                       src={brand.logo_url}
                       alt={`Logo ${brand.name}`}
                       class="h-12 w-auto object-contain mb-2"
                       loading="lazy"
                     />
-                  ) : (
-                    <div class="h-12 w-full flex items-center justify-center bg-gray-200 rounded mb-2">
-                      <span class="text-gray-500 text-xs">
-                        {brand.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  <span class="text-sm font-medium text-gray-700 text-center">
-                    {brand.name}
-                  </span>
+                    <span class="text-sm font-medium text-gray-700 text-center">
+                      {brand.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+
             {/* Duplicate for seamless loop */}
-            {brands.data.map((brand) => (
-              <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
-                <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
-                  {brand.logo_url ? (
+            {brands.data
+              .filter((brand) => brand.logo_url)
+              .map((brand) => (
+                <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
+                  <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
                     <img
                       src={brand.logo_url}
                       alt={`Logo ${brand.name}`}
                       class="h-12 w-auto object-contain mb-2"
                       loading="lazy"
                     />
-                  ) : (
-                    <div class="h-12 w-full flex items-center justify-center bg-gray-200 rounded mb-2">
-                      <span class="text-gray-500 text-xs">
-                        {brand.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                  <span class="text-sm font-medium text-gray-700 text-center">
-                    {brand.name}
-                  </span>
+                    <span class="text-sm font-medium text-gray-700 text-center">
+                      {brand.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </Section>
