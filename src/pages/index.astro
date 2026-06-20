@@ -18,145 +18,75 @@ import { fetchData } from '~/services/api';
 import ImageHeadingBackground from '~/assets/images/pexels-fox-58267-26510348.jpg';
 import ImageOne from '~/assets/images/pexels-freek-wolsink-508219-34194580.jpg';
 import ImageTwo from '~/assets/images/pexels-pixabay-159201.jpg';
-import ImageBanner from '~/assets/images/imgheader.png';
+import ImageBanner from '~/assets/images/Poster-Website-01.png';
+import ImageBanner2 from '~/assets/images/Poster-Website-02.png';
+import ImageBanner3 from '~/assets/images/Poster-Website-03.png';
 
 const companyProfile = await fetchData('company-profile');
+const brands = await fetchData('brands');
 
 const metaDescription =
-  'CV PRIMA INTI VANINDO – solusi otomasi industri, penjualan komponen, dan pemrograman sistem. Terpercaya untuk pabrik dan perusahaan di Indonesia.';
+  'CV PRIMA INTI VANINDO – distributor komponen otomasi industri terpercaya: inverter, PLC, HMI, servo drive, dan jasa pemrograman sistem. Solusi untuk pabrik dan perusahaan di Indonesia.';
 ---
 
-<Layout pageTitle="Beranda" metaDescription={metaDescription}>
-  {/* Main Heading */}
-  <Section class:list={'relative'}>
-    <Image
-      src={ImageHeadingBackground}
-      alt="Peralatan dan perkakas listrik"
-      class:list={'absolute inset-0 w-full h-full object-cover'}
-    />
-    <div class="absolute inset-0 w-full h-full object-cover bg-gray-800/80">
-    </div>
-    <Container class:list={'relative z-10'}>
-      <Heading class:list={'prose-invert max-w-4xl'}>
-        <h1 slot="heading-title" class="mb-0 lg:text-7xl text-balance">
-          Solusi Otomasi Industri Terpercaya
-        </h1>
-        <p slot="heading-content">
-          Mitra andal Anda untuk layanan penjualan, dan pemrograman sistem
-          industri – dari servo drive, inverter, PLC, HMI, hingga panel kontrol.
-          Lihat katalog produk atau konsultasikan kebutuhan proyek Anda dengan
-          tim teknis kami.
-        </p>
-      </Heading>
-      <WidgetSearch />
-    </Container>
-  </Section>
-
-  {/* Company Banner */}
-  <Section class:list={'bg-white border-b border-gray-100'}>
+<Layout
+  pageTitle="Beranda | CV Prima Inti Vanindo - Otomasi Industri"
+  metaDescription={metaDescription}
+>
+  {/* Company Banner - Carousel 16:9 */}
+  <Section class:list={'bg-gray-50 border-b border-gray-100'}>
     <Container class:list={'py-0 lg:py-0'}>
-      <div class="overflow-hidden rounded-none sm:rounded-xl shadow-sm">
-        <Image
-          src={ImageBanner}
-          alt="CV Prima Inti Vanindo – Spesialis Automasi, Service & Supply, Sidoarjo Jawa Timur"
-          class="w-full h-auto object-cover"
-          loading="eager"
-          widths={[640, 1024, 1536]}
-          sizes="100vw"
-        />
-      </div>
-    </Container>
-  </Section>
-
-  {/* Hero */}
-  <Section>
-    <Container>
-      <Hero>
-        <div slot="hero-left" class="prose lg:max-w-2xl">
-          <h2>Komponen berkualitas, layanan ahli</h2>
-          <p>
-            CV PRIMA INTI VANINDO telah memberikan solusi otomasi industri dan
-            layanan profesional selama lebih dari 10 tahun. Kami melayani klien
-            industri, komersial, dan residensial – menyediakan inverter, servo
-            drive, PLC, HMI, panel listrik, dan berbagai komponen sistem
-            kontrol.
-          </p>
-          <Button href="/products" class:list={'mt-4'}>
-            Lihat semua produk
-          </Button>
-        </div>
-
-        <div slot="hero-right">
-          <Stats
-            items={[
-              { title: 'Tahun pengalaman', value: '10+' },
-              { title: 'Brand ternama', value: '15+' },
-              { title: 'Kategori produk', value: '25+' },
-            ]}
-          />
-        </div>
-      </Hero>
-    </Container>
-  </Section>
-
-  {/* Grid */}
-  <Section>
-    <Container>
-      <Grid>
-        <GridItem
-          image={ImageOne}
-          imageAlt="Panel kontrol industri"
-          span={2}
-          link="/products"
-          As="a"
-          xl
+      <div
+        class="overflow-hidden rounded-none sm:rounded-xl shadow-sm relative"
+      >
+        <div
+          id="banner-carousel"
+          class="relative w-full"
+          style="aspect-ratio: 16/9;"
         >
-          <h2>Produk unggulan</h2>
-          <p>
-            Temukan komponen otomasi industri terpopuler: servo drive, inverter,
-            PLC, HMI, modul kontrol, dan perangkat proteksi. Semua produk
-            memenuhi standar internasional dengan dukungan teknis penuh.
-          </p>
-          <Button
-            As="button"
-            type="button"
-            color="white-outline"
-            class:list={'mt-4 group-hover:bg-white/10'}>Lihat katalog</Button
+          <div class="relative w-full h-full overflow-hidden">
+            <div
+              id="carousel-track"
+              class="flex transition-transform duration-300 ease-out h-full"
+            >
+              {/* Slide 1 - Gambar utama (asli) */}
+              <div class="w-full flex-shrink-0 h-full">
+                <img
+                  src={ImageBanner.src}
+                  alt="CV Prima Inti Vanindo – Spesialis otomasi industri, penyedia komponen PLC HMI inverter servo drive Sidoarjo Jawa Timur"
+                  class="w-full h-full object-cover"
+                  loading="eager"
+                />
+              </div>
+              {/* Slide 2 - Placeholder */}
+              <div class="w-full flex-shrink-0 h-full bg-gray-100">
+                <img
+                  src={ImageBanner2.src}
+                  alt="Koleksi komponen otomasi industri terbaru dari CV Prima Inti Vanindo"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              {/* Slide 3 - Placeholder */}
+              <div class="w-full flex-shrink-0 h-full bg-gray-100">
+                <img
+                  src={ImageBanner3.src}
+                  alt="Solusi pemrograman PLC dan HMI untuk sistem kontrol pabrik"
+                  class="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+          {/* Tombol navigasi */}
+          <button
+            id="carousel-prev"
+            class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md focus:outline-none transition-colors"
+            aria-label="Slide sebelumnya"
           >
-        </GridItem>
-
-        <GridItem
-          image={ImageTwo}
-          imageAlt="Teknisi sedang melakukan perawatan"
-          link={`https://wa.me/${companyProfile.phone}`}
-          As="a"
-        >
-          <h3>Layanan profesional</h3>
-          <p>
-            Instalasi, pemeliharaan preventif, diagnosis kerusakan, dan upgrade
-            sistem – untuk pabrik, gedung perkantoran, dan rumah.
-          </p>
-          <Button
-            As="button"
-            type="button"
-            color="white-outline"
-            class:list={'mt-4 group-hover:bg-white/10'}>Ajukan penawaran</Button
-          >
-        </GridItem>
-
-        <GridItem As="a" link="#contact">
-          <h3>Tidak menemukan yang dicari?</h3>
-          <p>
-            Hubungi kami langsung — tim kami siap membantu Anda menemukan
-            komponen yang tepat.
-          </p>
-          <span
-            class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gray-500 group-hover:text-gray-800 transition-colors"
-          >
-            Hubungi kami
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="size-4"
+              class="h-5 w-5 text-gray-800"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -165,26 +95,162 @@ const metaDescription =
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                d="M15 19l-7-7 7-7"></path>
             </svg>
-          </span>
-        </GridItem>
-      </Grid>
+          </button>
+          <button
+            id="carousel-next"
+            class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-md focus:outline-none transition-colors"
+            aria-label="Slide berikutnya"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-gray-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+          {/* Indikator dot */}
+          <div
+            class="absolute bottom-4 left-0 right-0 flex justify-center gap-2"
+          >
+            <button
+              class="carousel-dot w-2.5 h-2.5 rounded-full bg-white transition-all"
+              data-index="0"
+              aria-label="Slide 1"></button>
+            <button
+              class="carousel-dot w-2.5 h-2.5 rounded-full bg-white/40 transition-all"
+              data-index="1"
+              aria-label="Slide 2"></button>
+            <button
+              class="carousel-dot w-2.5 h-2.5 rounded-full bg-white/40 transition-all"
+              data-index="2"
+              aria-label="Slide 3"></button>
+          </div>
+        </div>
+      </div>
     </Container>
   </Section>
 
-  {/* Hero invert */}
-  <Section class:list={'bg-gray-50'}>
+  {/* Recent products */}
+  <Section class:list={'bg-white'}>
+    <Container>
+      <Heading>
+        <h2 slot="heading-title" class="mb-0">Produk kami</h2>
+        <!-- <p slot="heading-content">
+          Komponen otomasi terbaru yang kami tambahkan ke inventaris – setiap
+          bulan ada produk baru.
+        </p> -->
+      </Heading>
+      <ShowProducts
+        featured={true}
+        ui="grid"
+        slugs={[
+          '2209899d-c353-48a5-a752-049d52f60ccf',
+          'aa76c267-fca4-4d07-8324-d57b57a69219',
+          '7cc24975-5944-485c-a018-0c57bf9c612d',
+          '1237027b-b56f-45bf-b2d7-99c983b0b637',
+          '82378d77-c875-4d69-b018-07502828735b',
+          'd5f2a004-91ed-4554-9691-b08fba915659',
+          '7578f07f-b94a-4c52-9475-28e8a73273c9',
+          'ffd7abe7-9fe4-42f7-8bec-6371de1ff0fc',
+        ]}
+      />
+    </Container>
+  </Section>
+
+  {/* Tentang Kami - clean vertical layout */}
+  <Section class="bg-gray-50">
+    <Container>
+      <div class="mx-auto text-center">
+        <h2
+          class="text-4xl uppercase font-bold tracking-tight text-gray-900 sm:text-4xl"
+        >
+          Tentang Kami
+        </h2>
+        <h2
+          class="text-3xl mt-6 font-bold tracking-tight text-gray-900 sm:text-4xl"
+        >
+          Mitra Terpercaya untuk Solusi Otomasi Industri
+        </h2>
+        <div
+          class="text-2xl mt-6 mx-auto text-gray-600 text-justify gap-4 flex flex-col"
+        >
+          <p>
+            CV Prima Inti Vanindo adalah perusahaan yang bergerak di bidang
+            penyediaan spare parts dan solusi otomasi industri, dengan fokus
+            pada kebutuhan berbagai sektor manufaktur di Indonesia. Kami
+            berkomitmen menghadirkan produk berkualitas, layanan profesional,
+            dan solusi yang membantu pelanggan menjaga produktivitas serta
+            meminimalkan downtime mesin.
+          </p>
+          <p>
+            Dengan pengalaman di industri otomasi, kami menyediakan berbagai
+            komponen dari brand-brand ternama dunia seperti Siemens, Mitsubishi,
+            Omron, Schneider Electric, ABB, Delta, Yaskawa, Fuji Electric, LS
+            Electric, Autonics, Fanuc, Keyence, Allen Bradley, dan masih banyak
+            lagi.
+          </p>
+          <p>
+            Tidak hanya sebagai supplier, kami hadir sebagai partner bisnis yang
+            siap membantu pelanggan menemukan solusi terbaik sesuai kebutuhan
+            aplikasi dan sistem otomasi yang digunakan.
+          </p>
+        </div>
+      </div>
+
+      {/* Stats - centered below text */}
+      <div class="mt-12 flex flex-col justify-center">
+        <Stats
+          items={[
+            { title: 'Tahun pengalaman', value: '10+' },
+            { title: 'Brand ternama', value: '15+' },
+            { title: 'Kategori produk', value: '10+' },
+          ]}
+        />
+        <div class="mt-8 text-center">
+          <Button
+            color="blue"
+            href="/products"
+            class:list={'bg-blue-950 text-white'}
+          >
+            Lihat semua produk
+          </Button>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  {/* Grid - commented out as per original */}
+  <!-- <Section>
+    <Container>
+      <Grid>
+        ...
+      </Grid>
+    </Container>
+  </Section> -->
+
+  {/* Hero invert - Mengapa Memilih CV Prima Inti Vanindo */}
+  <Section class:list={'bg-white'}>
     <Container>
       <Hero invert>
-        <div slot="hero-left" class="prose lg:max-w-2xl">
-          <h2>Mengapa memilih CV PRIMA INTI VANINDO?</h2>
-          <p>
-            Kami menggabungkan pengalaman teknis puluhan tahun dengan pendekatan
-            yang mengutamakan kepuasan pelanggan. Setiap produk berasal dari
-            pabrikan ternama, dan setiap layanan dilakukan oleh tenaga ahli
-            bersertifikat. Kami menawarkan pengiriman cepat dan dukungan darurat
-            24/7.
+        <div slot="hero-left" class="lg:max-w-2xl">
+          <h2>Mengapa Memilih CV Prima Inti Vanindo?</h2>
+          <p class="text-2xl mt-6 text-justify">
+            Di dunia industri, setiap menit downtime dapat berdampak pada
+            produktivitas dan biaya operasional. Karena itu, memilih supplier
+            spare parts otomasi yang tepat adalah investasi untuk menjaga
+            kelancaran proses produksi. CV Prima Inti Vanindo hadir sebagai
+            mitra terpercaya dalam penyediaan spare parts otomasi industri
+            dengan komitmen memberikan produk berkualitas, pelayanan
+            profesional, dan solusi yang tepat untuk setiap kebutuhan pelanggan.
           </p>
         </div>
 
@@ -200,7 +266,8 @@ const metaDescription =
             allowfullscreen
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            title="Lokasi CV Prima Inti Vanindo"></iframe>
+            title="Lokasi CV Prima Inti Vanindo Sidoarjo"></iframe>
+
           <a
             href="https://maps.app.goo.gl/H83TiRYQ5QEPpWfS6"
             target="_blank"
@@ -232,73 +299,86 @@ const metaDescription =
     </Container>
   </Section>
 
-  {/* Featured products */}
-  <Section class:list={'bg-blue-50'}>
-    <Container>
-      <Heading>
-        <h2 slot="heading-title" class="mb-0">Produk otomasi terlaris</h2>
-        <p slot="heading-content">
-          Produk pilihan kami – digunakan oleh teknisi dan insinyur yang
-          mengandalkan keandalan dan performa.
-        </p>
-      </Heading>
-      <ShowProducts featured={true} />
-    </Container>
-  </Section>
-
-  {/* CTA */}
-  <Section
-    id="contact"
-    class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}
-  >
-    <Container>
-      <Heading class:list={'mb-0 lg:mb-0 prose-invert text-center mx-auto'}>
-        <h2 slot="heading-title">Butuh bantuan memilih produk?</h2>
-        <p slot="heading-content">
-          Tim kami siap membantu — baik Anda membutuhkan satu komponen maupun
-          pengadaan dalam jumlah besar. Chat langsung via WhatsApp untuk respons
-          cepat.
-        </p>
-        <a
-          slot="heading-content"
-          href={`https://wa.me/${companyProfile.phone}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-8 inline-flex items-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-semibold px-6 py-3 rounded-lg transition-colors"
+  {/* Brands we sell - Auto-moving carousel (marquee) with minimal spacing */}
+  {
+    brands && brands.data && brands.data.length > 0 && (
+      <Section class:list={'bg-gray-50 overflow-hidden pt-4 pb-0'}>
+        <Container class:list={'pb-0 container py-16'} contain={false}>
+          <div class="prose max-w-3xl mb-4">
+            <h2 slot="heading-title" class="mb-0">
+              Brand Supports:
+            </h2>
+            {/* <p slot="heading-content" class="mb-0">
+              Kami menyediakan berbagai komponen otomasi dari merek-merek
+              terkemuka global.
+            </p> */}
+          </div>
+        </Container>
+        <div
+          class="relative w-full overflow-hidden"
+          id="brands-carousel-container"
         >
-          <img
-            src="https://cdn.brandfetch.io/id6Zq084G_/w/800/h/516/theme/dark/id07h05Ur1.png?c=1dxbfHSJFAPEGdCLU4o5B"
-            alt="WhatsApp"
-            class="h-5 w-auto object-contain"
-            loading="lazy"
-          />
-          Chat via WhatsApp
-        </a>
-      </Heading>
-    </Container>
-  </Section>
+          <div class="flex" id="brands-carousel-track">
+            {/* Original brands */}
+            {brands.data
+              .filter((brand) => brand.logo_url)
+              .map((brand) => (
+                <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
+                  <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
+                    <img
+                      src={brand.logo_url}
+                      alt={`Logo ${brand.name}`}
+                      class="h-12 w-auto object-contain mb-2"
+                      loading="lazy"
+                    />
+                    <span class="text-sm font-medium text-gray-700 text-center">
+                      {brand.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
 
-  {/* Recent products */}
-  <Section class:list={'bg-gray-50'}>
-    <Container>
-      <Heading>
-        <h2 slot="heading-title" class="mb-0">Produk terbaru</h2>
-        <p slot="heading-content">
-          Komponen otomasi terbaru yang kami tambahkan ke inventaris – setiap
-          bulan ada produk baru.
-        </p>
-      </Heading>
-      <ShowProducts recent={true} ui="grid" />
-    </Container>
-  </Section>
+            {/* Duplicate for seamless loop */}
+            {brands.data
+              .filter((brand) => brand.logo_url)
+              .map((brand) => (
+                <div class="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] p-4">
+                  <div class="flex flex-col items-center p-3 transition-shadow rounded-lg h-full">
+                    <img
+                      src={brand.logo_url}
+                      alt={`Logo ${brand.name}`}
+                      class="h-12 w-auto object-contain mb-2"
+                      loading="lazy"
+                    />
+                    <span class="text-sm font-medium text-gray-700 text-center">
+                      {brand.name}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </Section>
+    )
+  }
+
+  {/* Featured products - commented out */}
+  <!-- <Section class:list={'bg-blue-50'}>
+    ...
+  </Section> -->
+
+  {/* CTA - commented out */}
+  <!-- <Section id="contact" class:list={'bg-gradient-to-br from-gray-900 to-gray-700'}>
+    ...
+  </Section> -->
 
   {/* FAQ */}
-  <Section class:list={'bg-gray-50'}>
+  <!-- <Section class:list={'bg-gray-50'}>
     <Container>
       <Heading class:list={'max-w-3xl mx-auto lg:text-center'}>
         <h2 slot="heading-title">Pertanyaan yang sering diajukan</h2>
         <p slot="heading-content">
-          Semua yang perlu Anda ketahui tentang produk, layanan, dan cara
+          Semua yang perlu Anda ketahui tentang produk, pemrograman, dan cara
           pemesanan.
         </p>
       </Heading>
@@ -310,9 +390,10 @@ const metaDescription =
               'Ya. Kami melayani pemilik rumah, teknisi listrik, kontraktor, dan pembeli industri. Diskon volume tersedia untuk pesanan dalam jumlah besar.',
           },
           {
-            question: 'Bisakah Anda memasang produk yang saya beli?',
+            question:
+              'Apakah tim teknis Anda dapat membantu pemrograman PLC/HMI?',
             answer:
-              'Tentu. Teknisi listrik bersertifikat kami dapat melakukan instalasi, pengujian, dan komisioning – menghemat waktu Anda dan memastikan kepatuhan terhadap standar keselamatan.',
+              'Kami menyediakan bantuan untuk pemrograman dan konfigurasi sistem otomasi sesuai kebutuhan Anda - mulai dari PLC, HMI hingga servo drive. Konsultasikan spesifikasi proyek Anda dengan tim kami.',
           },
           {
             question: 'Merek apa saja yang Anda sediakan?',
@@ -322,5 +403,186 @@ const metaDescription =
         ]}
       />
     </Container>
-  </Section>
+  </Section> -->
 </Layout>
+
+<script>
+  let bannerCleanup = null;
+  let brandsCleanup = null;
+
+  // ── Banner carousel ─────────────────────────────────────────────────────────
+  function initBannerCarousel() {
+    if (bannerCleanup) {
+      bannerCleanup();
+      bannerCleanup = null;
+    }
+
+    const track = document.getElementById('carousel-track');
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const carousel = document.getElementById('banner-carousel');
+    const viewport = track?.parentElement; // the overflow-hidden div
+
+    if (!track || !viewport) return;
+
+    const totalSlides = track.children.length;
+    let currentIndex = 0;
+    let timer = null;
+
+    // KEY FIX: use px not % —
+    // translateX(%) is relative to the element's OWN width (= all slides combined),
+    // so -100% overshoots by totalSlides×. Pixels use the visible container width.
+    function slideWidth() {
+      return viewport.offsetWidth;
+    }
+
+    function goTo(index) {
+      currentIndex = (index + totalSlides) % totalSlides;
+      track.style.transform = `translateX(-${currentIndex * slideWidth()}px)`;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('bg-white', i === currentIndex);
+        dot.classList.toggle('bg-white/40', i !== currentIndex);
+      });
+    }
+
+    function next() {
+      goTo(currentIndex + 1);
+    }
+    function prev() {
+      goTo(currentIndex - 1);
+    }
+    function stopAuto() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(next, 5000);
+    }
+
+    // Re-snap to correct position on window resize
+    const onResize = () => goTo(currentIndex);
+    window.addEventListener('resize', onResize);
+
+    prevBtn?.addEventListener('click', () => {
+      prev();
+      startAuto();
+    });
+    nextBtn?.addEventListener('click', () => {
+      next();
+      startAuto();
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        goTo(i);
+        startAuto();
+      });
+    });
+
+    carousel?.addEventListener('mouseenter', stopAuto);
+    carousel?.addEventListener('mouseleave', startAuto);
+
+    // Touch swipe
+    let touchStartX = 0;
+    carousel?.addEventListener(
+      'touchstart',
+      (e) => {
+        touchStartX = e.touches[0].clientX;
+      },
+      { passive: true },
+    );
+    carousel?.addEventListener(
+      'touchend',
+      (e) => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          diff > 0 ? next() : prev();
+          startAuto();
+        }
+      },
+      { passive: true },
+    );
+
+    goTo(0);
+    startAuto();
+
+    bannerCleanup = () => {
+      stopAuto();
+      window.removeEventListener('resize', onResize);
+      carousel?.removeEventListener('mouseenter', stopAuto);
+      carousel?.removeEventListener('mouseleave', startAuto);
+    };
+  }
+
+  // ── Brands marquee ──────────────────────────────────────────────────────────
+  function initBrandsMarquee() {
+    if (brandsCleanup) {
+      brandsCleanup();
+      brandsCleanup = null;
+    }
+
+    const track = document.getElementById('brands-carousel-track');
+    const container = document.getElementById('brands-carousel-container');
+    if (!track || !container) return;
+
+    let raf = null;
+    let isPaused = false;
+    let translate = 0;
+    let halfWidth = 0;
+    const speed = 0.5;
+
+    function measure() {
+      halfWidth = track.scrollWidth / 2;
+    }
+
+    function step() {
+      if (!isPaused && halfWidth > 0) {
+        translate -= speed;
+        if (Math.abs(translate) >= halfWidth) translate += halfWidth;
+        track.style.transform = `translateX(${translate}px)`;
+      }
+      raf = requestAnimationFrame(step);
+    }
+
+    const pause = () => {
+      isPaused = true;
+    };
+    const resume = () => {
+      isPaused = false;
+    };
+
+    container.addEventListener('mouseenter', pause);
+    container.addEventListener('mouseleave', resume);
+
+    if (document.readyState === 'complete') {
+      measure();
+    } else {
+      window.addEventListener('load', measure, { once: true });
+    }
+    setTimeout(measure, 300);
+
+    raf = requestAnimationFrame(step);
+
+    brandsCleanup = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+      container.removeEventListener('mouseenter', pause);
+      container.removeEventListener('mouseleave', resume);
+    };
+  }
+
+  // ── Bootstrap ───────────────────────────────────────────────────────────────
+  function init() {
+    initBannerCarousel();
+    initBrandsMarquee();
+  }
+
+  init();
+  document.addEventListener('astro:after-swap', init);
+</script>

@@ -6,10 +6,18 @@ import { fetchData } from '~/services/api';
 import IconLogo from '~/assets/images/icons/logo.svg';
 import ButtonGoBack from '~/components/buttons/ButtonGoBack.astro';
 import ButtonInquire from '~/components/buttons/ButtonInquire.astro';
+import { generateProductSlug, extractIdFromSlug, isCanonicalSlug } from '~/utils/slug';
 
 export const prerender = false;
 
-const { id } = Astro.params;
+const { slug } = Astro.params;
+
+// Extract UUID from slug param (works for both old pure-UUID links and new slug+id links)
+const id = extractIdFromSlug(slug ?? '');
+
+if (!id) {
+  return new Response(null, { status: 404, statusText: 'Product not found' });
+}
 
 const companyProfile = await fetchData('company-profile');
 
@@ -29,6 +37,14 @@ try {
 
 if (error || !product) {
   return new Response(null, { status: 404, statusText: 'Product not found' });
+}
+
+// Build canonical slug for this product
+const canonicalSlug = generateProductSlug(product.model, product.id);
+
+// If accessed via old pure-UUID link, 301 redirect to the new SEO-friendly slug URL
+if (!isCanonicalSlug(slug ?? '')) {
+  return Astro.redirect(`/products/${canonicalSlug}`, 301);
 }
 
 const formatIDR = (value) => {
